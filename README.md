@@ -1,6 +1,6 @@
 ## Next Tiptap
 
-A modern and feature-rich Rich Text Editor template, built with Next.js 14 and TipTap.
+A modern and feature-rich Rich Text Editor template, built with Next.js and TipTap.
 
 [Demo](https://next-tiptap.vercel.app/)
 
@@ -15,8 +15,8 @@ A modern and feature-rich Rich Text Editor template, built with Next.js 14 and T
 
 ### Tech Stack
 
-- Next.js 14
-- TipTap
+- Next.js v15
+- TipTap v3
 - CodeMirror
 - TypeScript
-- SCSS + Tailwind CSS
+- SCSS + Tailwind v4

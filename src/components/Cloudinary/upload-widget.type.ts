@@ -1,3 +1,5 @@
+import type { JSX } from "react";
+
 export type UploadWidgetInstance = any;
 export type CloudinaryInstance = any;
 

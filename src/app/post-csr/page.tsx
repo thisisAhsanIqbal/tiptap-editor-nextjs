@@ -1,28 +1,18 @@
 "use client";
-
-import { useState, useEffect, useMemo } from "react";
-
-import PostHeader from "../../components/shared/PostHeader";
-import PostToc from "../../components/shared/PostToc";
-import PostContent from "../../components/shared/PostContent";
-import PostSharing from "../../components/shared/PostSharing";
-import PostReadingProgress from "../../components/shared/PostReadingProgress";
-import TiptapRenderer from "@/components/TiptapRenderer/ClientRenderer";
 import Image from "next/image";
 
-import { getPost } from "@/services/post";
+import TiptapRenderer from "@/components/tiptap-renderer/client-renderer";
+import { usePost } from "@/hooks/use-post";
+
+import PostContent from "../../components/shared/post-content";
+import PostHeader from "../../components/shared/post-header";
+import PostSharing from "../../components/shared/post-sharing";
+import PostToc from "../../components/shared/post-toc";
+import PostReadingProgress from "../../components/shared/reading-progress";
+
 
 export default function PostPage() {
-  const [post, setPost] = useState<any>(null);
-
-  const readingTime = useMemo(() => {
-    const wpm = 150;
-    return Math.ceil(post?.wordCount / wpm);
-  }, [post]);
-
-  useEffect(() => {
-    getPost().then(setPost);
-  }, []);
+  const { post } = usePost();
 
   if (!post) return null;
 
@@ -33,7 +23,7 @@ export default function PostPage() {
         title={post.title}
         author={post.author}
         createdAt={post.createdAt}
-        readingTime={readingTime}
+        readingTime={post.readingTime}
         cover={post.cover}
       />
       <div className="grid grid-cols-1 w-full lg:w-auto lg:grid-cols-[minmax(auto,256px)_minmax(720px,1fr)_minmax(auto,256px)] gap-6 lg:gap-8">
@@ -43,7 +33,13 @@ export default function PostPage() {
         </PostContent>
         <PostToc />
       </div>
-      <Image src={"/doraemon.png"} width={350} height={350} alt="" className="mx-auto mt-20" />
+      <Image
+        src={"/doraemon.png"}
+        width={350}
+        height={350}
+        alt=""
+        className="mx-auto mt-20"
+      />
     </article>
   );
 }

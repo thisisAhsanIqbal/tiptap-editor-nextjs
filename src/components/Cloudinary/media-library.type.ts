@@ -1,3 +1,4 @@
+import type { JSX } from "react";
 // Via https://cloudinary.com/documentation/media_library_widget
 
 export interface MediaLibraryOptions {

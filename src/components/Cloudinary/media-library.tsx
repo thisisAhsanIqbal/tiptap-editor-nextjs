@@ -1,19 +1,27 @@
 import { useEffect, useRef, useState } from "react";
+
+import Script from "./script";
+
 import type {
   MediaLibraryOptions,
   MediaLibraryProps,
   MediaLibraryPropsOptions,
   MediaLibraryInsertResults,
 } from "./media-library.type";
-import Script from "./script";
 
 const CLOUDINARY_CLOUD_NAME = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
 const CLOUDINARY_API_KEY = process.env.NEXT_PUBLIC_CLOUDINARY_API_KEY;
 
-const MediaLibrary = ({ children, onClose, onInsert, onOpen, options = {} }: MediaLibraryProps) => {
-  const cloudinary: any = useRef();
-  const widget: any = useRef();
-  const widgetContainerRef: any = useRef();
+const MediaLibrary = ({
+  children,
+  onClose,
+  onInsert,
+  onOpen,
+  options = {},
+}: MediaLibraryProps) => {
+  const cloudinary: any = useRef<any>(null);
+  const widget: any = useRef<any>(null);
+  const widgetContainerRef: any = useRef<any>(null);
 
   const [isScriptLoading, setIsScriptLoading] = useState(true);
 
@@ -149,7 +157,7 @@ const MediaLibrary = ({ children, onClose, onInsert, onOpen, options = {} }: Med
   return (
     <>
       {typeof children === "function" && children(callbackOptions)}
-      <div ref={widgetContainerRef}></div>
+      <div ref={widgetContainerRef} />
       <Script
         src="https://media-library.cloudinary.com/global/all.js"
         onLoad={handleOnLoad}

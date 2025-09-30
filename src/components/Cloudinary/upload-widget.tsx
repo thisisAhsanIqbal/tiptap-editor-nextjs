@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+
 import Script from "./script";
 import {
   CloudinaryInstance,
@@ -9,8 +10,8 @@ import {
 } from "./upload-widget.type";
 
 const UploadWidget = ({ children, onSuccess, onError }: UploadWidgetProps) => {
-  const cloudinary = useRef<CloudinaryInstance>();
-  const widget = useRef<UploadWidgetInstance>();
+  const cloudinary = useRef<CloudinaryInstance | null>(null);
+  const widget = useRef<UploadWidgetInstance | null>(null);
 
   const [isScriptLoading, setIsScriptLoading] = useState(true);
 

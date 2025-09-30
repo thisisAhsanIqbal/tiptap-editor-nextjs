@@ -1,5 +1,5 @@
 :root {
-  // Base theme colors
+  /* Base theme colors */
   --rte-bg: #fff;
   --rte-fg: #1f2328;
   --rte-border: #d1d9e0;
@@ -15,7 +15,7 @@
   --rte-tooltip-fg: #f0f0f0;
   --rte-overlay: #32324d33;
 
-  // Syntax highlighting (GitHub Light theme)
+  /* Syntax highlighting (GitHub Light theme) */
   --rte-hljs-comment: #6a737d;
   --rte-hljs-keyword: #d73a49;
   --rte-hljs-entity: #6f42c1;
@@ -31,7 +31,7 @@
   --rte-hljs-changed: #e36209;
   --rte-hljs-ignored: #f6f8fa;
 
-  // Editor settings
+  /* Editor settings */
   --rte-editor-font-size: 15px;
   --rte-editor-line-height: 1.5;
   --rte-editor-font: var(--font-sans);
@@ -44,7 +44,7 @@
 }
 
 .dark {
-  // Dark theme colors
+  /* Dark theme colors */
   --rte-bg: #0d1017;
   --rte-fg: #f0f6fc;
   --rte-border: #3d444d;
@@ -60,7 +60,7 @@
   --rte-accent: #2d3440;
   --rte-accent-fg: #b1b8c0;
 
-  // Syntax highlighting (GitHub Dark theme)
+  /* Syntax highlighting (GitHub Dark theme) */
   --rte-hljs-comment: #8b949e;
   --rte-hljs-keyword: #ff7b72;
   --rte-hljs-entity: #d2a8ff;
@@ -80,9 +80,13 @@
   --rte-editor-code-bg: #1a2029;
   --rte-editor-scrollbar: #ffffff40;
 
-  //   Box shadow
-  --rte-shadow-1: 0px 0px 0px 1px #3d444d, 0px 6px 12px -3px #01040966, 0px 6px 18px 0px #01040966;
-  --rte-shadow-2: 0px 0px 0px 1px #3d444d, 0px 8px 16px -4px #01040966, 0px 4px 32px -4px #01040966,
-    0px 24px 48px -12px #01040966, 0px 48px 96px -24px #01040966;
+  /* Box shadow */
+  --rte-shadow-1:
+    0px 0px 0px 1px #3d444d, 0px 6px 12px -3px #01040966,
+    0px 6px 18px 0px #01040966;
+  --rte-shadow-2:
+    0px 0px 0px 1px #3d444d, 0px 8px 16px -4px #01040966,
+    0px 4px 32px -4px #01040966, 0px 24px 48px -12px #01040966,
+    0px 48px 96px -24px #01040966;
   --rte-shadow-3: 0px 0px 0px 1px #3d444d, 0px 24px 48px 0px #010409;
 }

@@ -1,16 +1,20 @@
-import { JetBrains_Mono, Open_Sans } from "next/font/google";
 import { Metadata } from "next";
+import { JetBrains_Mono, Open_Sans } from "next/font/google";
 
-const fontMono = JetBrains_Mono({ subsets: ["latin"], variable: "--font-mono" });
+const fontMono = JetBrains_Mono({
+  subsets: ["latin"],
+  variable: "--font-mono",
+});
 const fontSans = Open_Sans({ subsets: ["latin"], variable: "--font-sans" });
 
-import Header from "@/components/shared/Header";
+import Header from "@/components/shared/header";
 
-import "@/styles/globals.scss";
+import "@/styles/globals.css";
 
 export const metadata: Metadata = {
   title: "Next Tiptap",
-  description: "A modern WYSIWYG rich text editor based on tiptap and shadcn ui for ReactJs/NextJs",
+  description:
+    "A modern WYSIWYG rich text editor based on tiptap and shadcn ui for ReactJs/NextJs",
   keywords: "Tiptap, WYSIWYG, Rich Text Editor, ReactJS, NextJS",
   metadataBase: new URL(`https://next-tiptap.vercel.app`),
   openGraph: {
@@ -31,7 +35,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${fontMono.variable} ${fontSans.variable}`}>
+    <html
+      lang="en"
+      className={`${fontMono.variable} ${fontSans.variable} antialiased`}
+    >
       <body>
         <Header />
         <main>{children}</main>
