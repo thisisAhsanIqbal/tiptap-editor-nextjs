@@ -1,3 +1,4 @@
+import Emoji from "@tiptap/extension-emoji";
 import { Subscript } from "@tiptap/extension-subscript";
 import { Superscript } from "@tiptap/extension-superscript";
 import { TableKit as Table } from "@tiptap/extension-table";
@@ -12,9 +13,10 @@ import { StarterKit } from "@tiptap/starter-kit";
 
 import { CellAlign } from "./cell-align";
 import { CodeBlock } from "./code-block";
-import { Image, ImageFigure } from "./image";
+import { ImageFigure } from "./image";
 import { Link } from "./link";
 import { Youtube } from "./youtube";
+import { getEmojis } from "../helpers/emoji";
 
 type ExtensionConfig = {
   placeholder?: string | Record<string, string>;
@@ -54,6 +56,7 @@ export function createExtensions({ placeholder }: ExtensionConfig) {
     ImageFigure,
     CodeBlock,
     Youtube,
+    Emoji.configure({ emojis: getEmojis() }),
   ];
 }
 

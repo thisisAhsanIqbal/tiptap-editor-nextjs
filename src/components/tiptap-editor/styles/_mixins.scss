@@ -9,7 +9,6 @@
 }
 
 @mixin custom-scrollbar {
-  overflow: auto;
   scrollbar-width: thin;
   scrollbar-color: $editor-scrollbar transparent;
   scrollbar-gutter: stable;

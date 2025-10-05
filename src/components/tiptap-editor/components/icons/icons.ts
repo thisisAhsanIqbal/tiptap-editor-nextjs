@@ -70,6 +70,10 @@ import {
   TbArrowDown,
   TbScissors,
   TbCopy,
+  TbMoodSmile,
+  TbLeaf,
+  TbApple,
+  TbSearch,
 } from "react-icons/tb";
 
 import IconCorner from "./Corner";
@@ -158,6 +162,8 @@ export const icons = {
   ArrowDown: TbArrowDown,
   Scissors: TbScissors,
   Copy: TbCopy,
+  Emoji: TbMoodSmile,
+  Search: TbSearch,
 } satisfies Record<string, IconType>;
 
 export type { IconBaseProps, IconType };

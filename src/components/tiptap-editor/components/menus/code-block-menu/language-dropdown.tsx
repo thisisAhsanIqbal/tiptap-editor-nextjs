@@ -6,6 +6,7 @@ import { useTiptapEditor } from "../../provider";
 import Icon from "../../ui/icon";
 import Input from "../../ui/input";
 import { PopoverClose } from "../../ui/popover";
+import SearchInput from "../../ui/search-input";
 
 interface LanguageOption {
   label: string;
@@ -79,19 +80,26 @@ export const LanguageDropdown = ({
       type="popover"
       text={currentLanguage}
       hideText={false}
-      buttonStyle={{ minWidth: "6rem" }}
+      buttonStyle={{ minWidth: "8.5rem" }}
       dropdownClass="rte-code-dropdown"
       dropdownStyle={{
         minWidth: "12rem",
         maxHeight: `${maxHeight}px`,
       }}
     >
-      <Input
+      <SearchInput
         className="code-search"
         placeholder="Search languages..."
         value={search}
         onChange={handleSearchChange}
+        showSearchIcon={false}
       />
+      {/* <Input
+        className="code-search"
+        placeholder="Search languages..."
+        value={search}
+        onChange={handleSearchChange}
+      /> */}
       <div
         className="code-list"
         style={{

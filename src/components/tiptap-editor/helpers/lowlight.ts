@@ -1,4 +1,5 @@
 import plaintext from "highlight.js/lib/languages/plaintext";
+import xml from "highlight.js/lib/languages/xml";
 import { createLowlight, type LanguageFn } from "lowlight";
 
 export const loader: Record<string, () => Promise<any>> = {
@@ -94,6 +95,7 @@ export class LowlightService {
   constructor() {
     this.lowlight = createLowlight();
     this.lowlight.register("plaintext", plaintext);
+    this.lowlight.register("xml", xml);
   }
 
   getLowlight(): ReturnType<typeof createLowlight> {

@@ -2,6 +2,7 @@ import React from "react";
 
 import BoldButton from "./controls/bold-button";
 import BulletListButton from "./controls/bullet-list-button";
+import EmojiPopover from "./controls/emoji-popover";
 import HeadingDropdown from "./controls/heading-dropdown";
 import ImageButton from "./controls/image-button-2";
 import InsertDropdown from "./controls/insert-dropdown";
@@ -62,6 +63,7 @@ export const MenuBar = () => {
         <LinkButton />
         <ImageButton />
         <TableButton />
+        <EmojiPopover />
         <InsertDropdown />
       </ToolbarGroup>
     </Toolbar>

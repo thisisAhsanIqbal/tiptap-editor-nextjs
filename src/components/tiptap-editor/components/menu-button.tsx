@@ -131,6 +131,7 @@ export const MenuButton = React.forwardRef<HTMLButtonElement, MenuButtonProps>(
             className={dropdownClass}
             style={dropdownStyle}
             onCloseAutoFocus={(e) => e.preventDefault()}
+            onOpenAutoFocus={(e) => e.preventDefault()}
           >
             {children}
           </PopoverContent>
