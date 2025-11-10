@@ -41,6 +41,10 @@
   --rte-editor-selection: #2383e247;
 
   --rte-radius: 0.5rem;
+
+  code span.shiki {
+    color: var(--rte-shiki-light);
+  }
 }
 
 .dark {
@@ -89,4 +93,8 @@
     0px 4px 32px -4px #01040966, 0px 24px 48px -12px #01040966,
     0px 48px 96px -24px #01040966;
   --rte-shadow-3: 0px 0px 0px 1px #3d444d, 0px 24px 48px 0px #010409;
+
+  code span.shiki {
+    color: var(--rte-shiki-dark);
+  }
 }

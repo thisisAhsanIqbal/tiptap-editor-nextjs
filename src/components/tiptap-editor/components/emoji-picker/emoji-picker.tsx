@@ -2,17 +2,16 @@ import React, { useMemo, useCallback, useState } from "react";
 
 import { List, type RowComponentProps } from "react-window";
 
-import Icon from "../ui/icon";
-import Input from "../ui/input";
+import { EmojiItem } from "../../helpers/emoji";
 import SearchInput from "../ui/search-input";
 
-import type { EmojiItem } from "@tiptap/extension-emoji";
+// import type { EmojiItem } from "@tiptap/extension-emoji";
 
 const EMOJIS_PER_ROW = 8;
 const EMOJI_ROW_HEIGHT = 36;
 
 interface EmojiPickerProps {
-  emojis: EmojiItem[]; // All emojis, không filter
+  emojis: EmojiItem[];
   onSelect?: (emoji: EmojiItem) => void;
 }
 
@@ -30,29 +29,32 @@ interface VirtualizedRowProps {
   onHover?: (emoji: EmojiItem | null) => void;
 }
 
-const VirtualizedRow = React.memo<RowComponentProps<VirtualizedRowProps>>(
-  ({ index, style, items, onSelect, onHover }) => {
-    const emojis = items[index];
+const VirtualizedRow = ({
+  index,
+  style,
+  items,
+  onSelect,
+  onHover,
+}: RowComponentProps<VirtualizedRowProps>): React.ReactElement => {
+  const emojis = items[index];
 
-    return (
-      <div style={style} className="rte-ep__row">
-        {emojis.map((emoji, i) => (
-          <button
-            key={`${emoji.name}-${i}`}
-            type="button"
-            className="rte-ep__item"
-            onClick={() => onSelect?.(emoji)}
-            onMouseEnter={() => onHover?.(emoji)}
-            onMouseLeave={() => onHover?.(null)}
-          >
-            {emoji.emoji}
-          </button>
-        ))}
-      </div>
-    );
-  }
-);
-VirtualizedRow.displayName = "VirtualizedRow";
+  return (
+    <div style={style} className="rte-ep__row">
+      {emojis.map((emoji, i) => (
+        <button
+          key={`${emoji.name}-${i}`}
+          type="button"
+          className="rte-ep__item"
+          onClick={() => onSelect?.(emoji)}
+          onMouseEnter={() => onHover?.(emoji)}
+          onMouseLeave={() => onHover?.(null)}
+        >
+          {emoji.emoji}
+        </button>
+      ))}
+    </div>
+  );
+};
 
 const EmojiPicker = ({ emojis, onSelect }: EmojiPickerProps) => {
   const [query, setQuery] = useState("");
@@ -167,7 +169,7 @@ const EmojiPicker = ({ emojis, onSelect }: EmojiPickerProps) => {
             <span className="rte-ep__preview-text">{hoveredEmoji.name}</span>
           </>
         ) : (
-          <span className="rte-ep__preview-text">Select an emoji…</span>
+          <span className="rte-ep__preview-text">Select an emoji...</span>
         )}
       </div>
     </div>

@@ -28,7 +28,7 @@ export default async function PostPage() {
       <div className="grid grid-cols-1 w-full lg:w-auto lg:grid-cols-[minmax(auto,256px)_minmax(720px,1fr)_minmax(auto,256px)] gap-6 lg:gap-12">
         <PostSharing />
         <PostContent>
-          <TiptapRenderer>{post.content}</TiptapRenderer>
+          <TiptapRenderer>{post.html}</TiptapRenderer>
         </PostContent>
         <PostToc />
       </div>

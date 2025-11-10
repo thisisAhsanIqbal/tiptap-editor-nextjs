@@ -44,7 +44,10 @@ export const components: Partial<Components> = {
     />
   ),
   iframe: ({ ...props }) => (
-    <iframe className="w-full h-full aspect-video mx-auto rounded-lg" />
+    <iframe
+      className="w-full h-full aspect-video mx-auto rounded-lg"
+      {...props}
+    />
     //  <div className="relative pt-[56.25%] rounded-lg overflow-hidden">
     //    <div className="absolute inset-0">
     //      <iframe {...props} allowFullScreen={true} className="w-full h-full" />

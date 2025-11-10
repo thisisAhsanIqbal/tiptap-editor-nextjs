@@ -1,6 +1,7 @@
 import React from "react";
 
 import Image from "next/image";
+import Link from "next/link";
 import { LuCalendarDays, LuClock } from "react-icons/lu";
 
 interface PostHeaderProps {
@@ -11,13 +12,23 @@ interface PostHeaderProps {
   readingTime: number;
 }
 
-const PostHeader = ({ title, author, cover, createdAt, readingTime }: PostHeaderProps) => {
+const PostHeader = ({
+  title,
+  author,
+  cover,
+  createdAt,
+  readingTime,
+}: PostHeaderProps) => {
   return (
-    <div className="lg:max-w-[45rem] mx-auto">
-      <h1 className="text-3xl leading-snug md:text-4xl md:leading-normal font-bold">{title}</h1>
-
-      <div className="flex items-center mt-6 gap-4">
-        <Image src={"/avatar.jpg"} width={50} height={50} alt="" className="rounded-full" />
+    <div className="lg:max-w-180 mx-auto">
+      <div className="flex items-center mb-6 gap-4">
+        <Image
+          src={"/avatar.jpg"}
+          width={50}
+          height={50}
+          alt=""
+          className="rounded-full"
+        />
         <div className="">
           <div className="font-semibold mb-3">
             By <u>{author}</u>
@@ -34,7 +45,18 @@ const PostHeader = ({ title, author, cover, createdAt, readingTime }: PostHeader
             </div>
           </div>
         </div>
+
+        <Link
+          href="/"
+          className="ml-auto flex items-center gap-2 px-5 h-8 bg-amber-600 text-white rounded-md font-medium text-sm"
+        >
+          Edit
+        </Link>
       </div>
+
+      <h1 className="text-3xl leading-snug md:text-4xl md:leading-normal font-bold">
+        {title}
+      </h1>
 
       <Image
         src={cover}

@@ -1,10 +1,11 @@
-import { mockData } from "@/mock";
+import { type JSONContent } from "@tiptap/react";
 
-const mock = mockData.html;
+import { mockData } from "@/mock";
 
 export type Post = {
   title: string;
-  content: string;
+  html: string;
+  json: JSONContent;
   cover: string;
   author: string;
   readingTime: number;
@@ -17,10 +18,10 @@ const getPost = (): Promise<Post> => {
       if (typeof window !== "undefined") {
         try {
           const data = localStorage.getItem("post");
-          const parsed: Post = data ? JSON.parse(data) : mock;
+          const parsed: Post = data ? JSON.parse(data) : mockData;
 
           if (!data) {
-            savePost(mock);
+            savePost(mockData);
           }
 
           return resolve(parsed);
@@ -29,7 +30,7 @@ const getPost = (): Promise<Post> => {
         }
       }
 
-      return resolve(mock);
+      return resolve(mockData);
     }, 200);
   });
 };
@@ -38,7 +39,7 @@ const savePost = (data: Partial<Post>): void => {
   if (typeof window === "undefined") return;
 
   try {
-    const value: Post = data?.content?.trim() ? { ...mock, ...data } : mock;
+    const value: Post = { ...mockData, ...data };
     localStorage.setItem("post", JSON.stringify(value));
   } catch (error) {
     console.error("Error saving to localStorage:", error);

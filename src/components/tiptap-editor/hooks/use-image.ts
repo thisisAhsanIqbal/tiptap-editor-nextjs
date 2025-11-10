@@ -59,6 +59,7 @@ export function getCurrentImageData(editor: Editor | null): ImageData | null {
     height: node.attrs.height,
     // hasCaption: editor.isActive("imageFigure"),
     hasCaption: node.attrs.caption !== null,
+    caption: node.attrs.caption,
   };
 }
 
@@ -85,6 +86,7 @@ export function updateImageAttributes(
 export function removeImage(editor: Editor | null): boolean {
   if (!editor || !editor.isEditable) return false;
   if (!isImageActive(editor)) return false;
+  console.log(123);
 
   return editor.chain().focus().removeImage().run();
 }

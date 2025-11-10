@@ -1,10 +1,10 @@
 import React, { useMemo, useState, useCallback, memo } from "react";
 
-import { lowlightService } from "../../../helpers/lowlight";
+import { getSupportedLanguages } from "@/lib/lowlight";
+
 import { MenuButton } from "../../menu-button";
 import { useTiptapEditor } from "../../provider";
 import Icon from "../../ui/icon";
-import Input from "../../ui/input";
 import { PopoverClose } from "../../ui/popover";
 import SearchInput from "../../ui/search-input";
 
@@ -26,10 +26,10 @@ export const LanguageDropdown = ({
   const [search, setSearch] = useState("");
 
   const options: LanguageOption[] = useMemo(
-    () =>
-      lowlightService
-        .getSupportedLanguages()
-        .map((item) => ({ label: item.label, value: item.syntax })),
+    () => getSupportedLanguages(),
+    // lowlightService
+    //   .getSupportedLanguages()
+    //   .map((item) => ({ label: item.label, value: item.syntax })),
     []
   );
 

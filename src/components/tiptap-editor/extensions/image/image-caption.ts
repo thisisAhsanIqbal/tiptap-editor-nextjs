@@ -61,6 +61,52 @@ export const ImageCaption = Figcaption.extend({
           },
         },
       }),
+
+      // Plugin to sync caption text to image attrs
+      new Plugin({
+        key: new PluginKey("imageCaptionSync"),
+        appendTransaction: (transactions, oldState, newState) => {
+          const docChanged = transactions.some((tr) => tr.docChanged);
+          if (!docChanged) return null;
+
+          const { selection } = newState;
+          const { $anchor } = selection;
+
+          // Check if inside imageCaption
+          if ($anchor.parent.type.name !== this.name) {
+            return null;
+          }
+
+          // Get the parent figure node
+          const figureDepth = $anchor.depth - 1;
+          const figure = $anchor.node(figureDepth);
+          if (figure.type.name !== ImageFigure.name) {
+            return null;
+          }
+
+          const imageNode = figure.firstChild;
+          const captionNode = figure.lastChild;
+          if (!imageNode || !captionNode) {
+            return null;
+          }
+
+          const prev = imageNode.attrs.caption;
+          const next = captionNode.textContent;
+          if (prev === next) {
+            return null;
+          }
+
+          // Create transaction to update caption attribute
+          const tr = newState.tr;
+          const imagePos = $anchor.start(figureDepth);
+          tr.setNodeMarkup(imagePos, undefined, {
+            ...imageNode.attrs,
+            caption: next,
+          });
+
+          return tr;
+        },
+      }),
     ];
   },
 });

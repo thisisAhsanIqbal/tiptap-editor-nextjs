@@ -1,6 +1,6 @@
 import { useCallback } from "react";
 
-import { useEditorState, type Editor } from "@tiptap/react";
+import { isNodeSelection, useEditorState, type Editor } from "@tiptap/react";
 
 import { useTiptapEditor } from "../components/provider";
 import { getClosestDOM } from "../helpers/tiptap";
@@ -24,8 +24,18 @@ export function getCodeBlockLanguage(editor: Editor | null): string | null {
 export function toggleCodeBlock(editor: Editor | null): boolean {
   if (!editor || !editor.isEditable) return false;
   if (!canToggleCodeBlock(editor)) return false;
-  return editor.chain().focus().toggleCodeBlock().run();
+
+  const chain = editor.chain().focus();
+
+  // If code block is active, just turn it off
+  if (editor.isActive("codeBlock")) {
+    return chain.toggleCodeBlock().run();
+  }
+
+  // If NOT active, clear nodes first then toggle
+  return chain.clearNodes().toggleCodeBlock().run();
 }
+
 export function getCodeBlockContent(editor: Editor | null): string {
   if (!editor) return "";
   const node = getClosestDOM(editor, (node) => node.nodeName === "PRE");

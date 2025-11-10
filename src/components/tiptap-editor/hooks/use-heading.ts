@@ -1,6 +1,6 @@
 import { useCallback } from "react";
 
-import { useEditorState, type Editor } from "@tiptap/react";
+import { isNodeSelection, useEditorState, type Editor } from "@tiptap/react";
 
 import { useTiptapEditor } from "../components/provider";
 
@@ -46,11 +46,9 @@ export function toggleHeading(
 
   const chain = editor.chain().focus();
 
-  if (level) {
-    return chain.toggleHeading({ level }).run();
-  }
-
-  return chain.focus().setParagraph().run();
+  return level
+    ? chain.clearNodes().toggleHeading({ level }).run()
+    : chain.setParagraph().run();
 }
 
 // Hook

@@ -9,12 +9,12 @@ import { loadInitialContent } from "@/components/tiptap-editor/helpers/tiptap";
 import { usePost } from "@/hooks/use-post";
 import { Post } from "@/services/post";
 
-type PostForm = Pick<Post, "title" | "content" | "readingTime">;
+type PostForm = Pick<Post, "title" | "html" | "readingTime">;
 
 export default function EditForm() {
   const editorRef = useRef<TiptapEditorRef>(null);
   const form = useForm<PostForm>({
-    defaultValues: { title: "", content: "" },
+    defaultValues: { title: "", html: "" },
   });
 
   const { debouncedSave, isLoading, post } = usePost();
@@ -28,7 +28,7 @@ export default function EditForm() {
   useEffect(() => {
     const editor = editorRef.current!;
     if (post) {
-      loadInitialContent(editor, post.content);
+      loadInitialContent(editor, post.html);
       form.reset({ ...post });
     }
   }, [post]);
@@ -71,12 +71,11 @@ export default function EditForm() {
         </label>
         <Controller
           control={form.control}
-          name="content"
+          name="html"
           render={({ field }) => (
             <TiptapEditor
               ref={editorRef}
               output="html"
-              content={post?.content}
               minHeight={320}
               maxHeight={640}
               maxWidth={700}

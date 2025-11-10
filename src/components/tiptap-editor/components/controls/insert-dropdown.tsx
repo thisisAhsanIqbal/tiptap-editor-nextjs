@@ -7,10 +7,11 @@ import { DropdownMenuItem } from "../ui/dropdown";
 const InsertDropdown = () => {
   const { editor } = useTiptapEditor();
 
-  const toggleCodeBlock = () => editor.chain().focus().toggleCodeBlock().run();
+  const toggleCodeBlock = () =>
+    editor.chain().focus().clearNodes().toggleCodeBlock().run();
 
   const toggleBlockquote = () =>
-    editor.chain().focus().toggleBlockquote().run();
+    editor.chain().focus().clearNodes().toggleBlockquote().run();
 
   const insertYoutube = () => {
     const src = prompt(

@@ -10,7 +10,6 @@ import PostSharing from "../../components/shared/post-sharing";
 import PostToc from "../../components/shared/post-toc";
 import PostReadingProgress from "../../components/shared/reading-progress";
 
-
 export default function PostPage() {
   const { post } = usePost();
 
@@ -29,7 +28,7 @@ export default function PostPage() {
       <div className="grid grid-cols-1 w-full lg:w-auto lg:grid-cols-[minmax(auto,256px)_minmax(720px,1fr)_minmax(auto,256px)] gap-6 lg:gap-8">
         <PostSharing />
         <PostContent>
-          <TiptapRenderer>{post.content}</TiptapRenderer>
+          <TiptapRenderer>{post.html}</TiptapRenderer>
         </PostContent>
         <PostToc />
       </div>

@@ -1,1086 +1,1640 @@
-// HTML String Format
-export const htmlMock = {
-  title: "Tiptap: The Headless Rich Text Editor for Modern Web Applications",
-  content:
-    '<h2>What is Tiptap?</h2><p>Tiptap is a headless, framework-agnostic rich text editor built on top of ProseMirror. Unlike traditional WYSIWYG editors, Tiptap gives you complete control over the user interface while providing a powerful and extensible editing experience. It\'s the perfect choice for developers who want to build custom editing experiences without sacrificing functionality.</p><h3>Why Choose Tiptap?</h3><p>Tiptap stands out from other rich text editors by offering unparalleled flexibility and developer experience. It\'s designed to be extended, customized, and integrated seamlessly into any modern web application.</p><ul><li><p><strong>Headless Architecture:</strong> Build your own UI with complete design freedom</p></li><li><p><strong>Framework Agnostic:</strong> Works with React, Vue, Svelte, and vanilla JavaScript</p></li><li><p><strong>Extensible:</strong> Create custom extensions or use community-built ones</p></li><li><p><strong>TypeScript First:</strong> Full type safety and excellent IDE support</p></li><li><p><strong>Collaborative Editing:</strong> Built-in support for real-time collaboration</p></li></ul><figure><img src="https://images.unsplash.com/photo-1499951360447-b19be8fe80f5?w=1200&amp;h=700&amp;fit=crop" alt="Developer working with Tiptap" caption="Building custom rich text experiences with Tiptap\'s flexible architecture" data-width="1200" data-height="700" style="width: 85%;"><figcaption>Building custom rich text experiences with Tiptap\'s flexible architecture</figcaption></figure><h2>Core Features</h2><p>Tiptap comes packed with features that make it the go-to choice for modern web applications requiring rich text editing capabilities.</p><h3>Rich Text Formatting</h3><p>Tiptap supports all standard text formatting options you\'d expect from a modern editor, with the ability to customize and extend each one.</p><pre><code class="language-typescript">import { useEditor, EditorContent } from \'@tiptap/react\'\nimport StarterKit from \'@tiptap/starter-kit\'\n\nfunction MyEditor() {\n  const editor = useEditor({\n    extensions: [StarterKit],\n    content: \'&lt;p&gt;Hello Tiptap!&lt;/p&gt;\',\n  })\n\n  return &lt;EditorContent editor={editor} /&gt;\n}</code></pre><h3>Built-in Extensions</h3><p>Tiptap provides a comprehensive set of extensions out of the box, covering everything from basic text formatting to advanced features like tables and code blocks.</p><table style="min-width: 105px;"><colgroup><col style="min-width: 35px;"><col style="min-width: 35px;"><col style="min-width: 35px;"></colgroup><tbody><tr><th colspan="1" rowspan="1" style="vertical-align: top; text-align: center;"><p>Extension</p></th><th colspan="1" rowspan="1" style="vertical-align: top; text-align: center;"><p>Description</p></th><th colspan="1" rowspan="1" style="vertical-align: top; text-align: center;"><p>Use Case</p></th></tr><tr><td colspan="1" rowspan="1" style="vertical-align: top; text-align: center;"><p>StarterKit</p></td><td colspan="1" rowspan="1" style="vertical-align: top; text-align: center;"><p>Bundle of essential extensions</p></td><td colspan="1" rowspan="1" style="vertical-align: top; text-align: center;"><p>Quick setup for most projects</p></td></tr><tr><td colspan="1" rowspan="1" style="vertical-align: top; text-align: center;"><p>Table</p></td><td colspan="1" rowspan="1" style="vertical-align: top; text-align: center;"><p>Full-featured table support</p></td><td colspan="1" rowspan="1" style="vertical-align: top; text-align: center;"><p>Data presentation, layouts</p></td></tr><tr><td colspan="1" rowspan="1" style="vertical-align: top; text-align: center;"><p>CodeBlock</p></td><td colspan="1" rowspan="1" style="vertical-align: top; text-align: center;"><p>Syntax-highlighted code blocks</p></td><td colspan="1" rowspan="1" style="vertical-align: top; text-align: center;"><p>Technical documentation</p></td></tr><tr><td colspan="1" rowspan="1" style="vertical-align: top; text-align: center;"><p>Image</p></td><td colspan="1" rowspan="1" style="vertical-align: top; text-align: center;"><p>Image insertion and manipulation</p></td><td colspan="1" rowspan="1" style="vertical-align: top; text-align: center;"><p>Visual content</p></td></tr><tr><td colspan="1" rowspan="1" style="vertical-align: top; text-align: center;"><p>Link</p></td><td colspan="1" rowspan="1" style="vertical-align: top; text-align: center;"><p>Hyperlink management</p></td><td colspan="1" rowspan="1" style="vertical-align: top; text-align: center;"><p>Navigation, references</p></td></tr><tr><td colspan="1" rowspan="1" style="vertical-align: top; text-align: center;"><p>Collaboration</p></td><td colspan="1" rowspan="1" style="vertical-align: top; text-align: center;"><p>Real-time collaborative editing</p></td><td colspan="1" rowspan="1" style="vertical-align: top; text-align: center;"><p>Team workflows</p></td></tr></tbody></table><blockquote><p>"Tiptap\'s extensibility is unmatched. We were able to build a custom editor for our documentation platform in days, not weeks." - Engineering Team at Vercel</p></blockquote><h2>Creating Custom Extensions</h2><p>One of Tiptap\'s most powerful features is the ability to create custom extensions tailored to your specific needs. Extensions can add new nodes, marks, or even completely new functionality.</p><h3>Example: Custom Mention Extension</h3><pre><code class="language-typescript">import { Node, mergeAttributes } from \'@tiptap/core\'\nimport { ReactNodeViewRenderer } from \'@tiptap/react\'\nimport MentionComponent from \'./MentionComponent\'\n\nexport const Mention = Node.create({\n  name: \'mention\',\n  \n  group: \'inline\',\n  inline: true,\n  selectable: false,\n  atom: true,\n\n  addAttributes() {\n    return {\n      id: {\n        default: null,\n        parseHTML: element =&gt; element.getAttribute(\'data-id\'),\n        renderHTML: attributes =&gt; ({\n          \'data-id\': attributes.id,\n        }),\n      },\n      label: {\n        default: null,\n        parseHTML: element =&gt; element.getAttribute(\'data-label\'),\n        renderHTML: attributes =&gt; ({\n          \'data-label\': attributes.label,\n        }),\n      },\n    }\n  },\n\n  parseHTML() {\n    return [{ tag: \'span[data-mention]\' }]\n  },\n\n  renderHTML({ HTMLAttributes }) {\n    return [\'span\', mergeAttributes({ \'data-mention\': \'\' }, HTMLAttributes)]\n  },\n\n  addNodeView() {\n    return ReactNodeViewRenderer(MentionComponent)\n  },\n})</code></pre><figure><img src="https://images.unsplash.com/photo-1551650975-87deedd944c3?w=1200&amp;h=700&amp;fit=crop" alt="Custom Tiptap extensions" caption="Custom extensions enable unique editing experiences tailored to your application" data-width="1200" data-height="700" style="width: 75%;"><figcaption>Custom extensions enable unique editing experiences tailored to your application</figcaption></figure><h2>Collaborative Editing</h2><p>Tiptap includes first-class support for collaborative editing through its Collaboration extension, powered by Yjs. Multiple users can edit the same document simultaneously with automatic conflict resolution.</p><h3>Setting Up Collaboration</h3><pre><code class="language-typescript">import { useEditor } from \'@tiptap/react\'\nimport StarterKit from \'@tiptap/starter-kit\'\nimport Collaboration from \'@tiptap/extension-collaboration\'\nimport CollaborationCursor from \'@tiptap/extension-collaboration-cursor\'\nimport * as Y from \'yjs\'\nimport { WebrtcProvider } from \'y-webrtc\'\n\nconst ydoc = new Y.Doc()\nconst provider = new WebrtcProvider(\'document-name\', ydoc)\n\nfunction CollaborativeEditor() {\n  const editor = useEditor({\n    extensions: [\n      StarterKit.configure({\n        history: false, // Disable history for collaboration\n      }),\n      Collaboration.configure({\n        document: ydoc,\n      }),\n      CollaborationCursor.configure({\n        provider: provider,\n        user: {\n          name: \'John Doe\',\n          color: \'#f783ac\',\n        },\n      }),\n    ],\n  })\n\n  return &lt;EditorContent editor={editor} /&gt;  \n}</code></pre><h2>Styling and Customization</h2><p>Since Tiptap is headless, you have complete control over the styling. You can use any CSS framework or custom styles to create the perfect look for your application.</p><h3>Popular Styling Approaches</h3><ol><li><p><strong>Tailwind CSS:</strong> Utility-first approach for rapid development</p></li><li><p><strong>CSS Modules:</strong> Scoped styles for component isolation</p></li><li><p><strong>Styled Components:</strong> CSS-in-JS for dynamic styling</p></li><li><p><strong>shadcn/ui:</strong> Pre-built components with Tiptap integration</p></li></ol><h2>Performance Optimization</h2><p>Tiptap is built with performance in mind, but there are several strategies you can employ to ensure optimal performance even with large documents.</p><ul><li><p><strong>Lazy Loading:</strong> Load extensions only when needed</p></li><li><p><strong>Debouncing:</strong> Reduce update frequency for auto-save features</p></li><li><p><strong>Virtual Scrolling:</strong> Handle extremely long documents efficiently</p></li><li><p><strong>Code Splitting:</strong> Separate editor code from main bundle</p></li></ul><h2>Integration Examples</h2><p>Tiptap integrates seamlessly with popular frameworks and tools. Here are some common integration patterns.</p><h3>Next.js Integration</h3><pre><code class="language-typescript">\'use client\'\n\nimport { useEditor, EditorContent } from \'@tiptap/react\'\nimport StarterKit from \'@tiptap/starter-kit\'\nimport { useEffect } from \'react\'\n\nexport default function TiptapEditor({ \n  initialContent, \n  onChange \n}: { \n  initialContent: string\n  onChange: (html: string) =&gt; void \n}) {\n  const editor = useEditor({\n    extensions: [StarterKit],\n    content: initialContent,\n    onUpdate: ({ editor }) =&gt; {\n      onChange(editor.getHTML())\n    },\n  })\n\n  useEffect(() =&gt; {\n    return () =&gt; {\n      editor?.destroy()\n    }\n  }, [editor])\n\n  return (\n    &lt;div className="prose max-w-none"&gt;\n      &lt;EditorContent editor={editor} /&gt;\n    &lt;/div&gt;\n  )\n}</code></pre><h2>Use Cases</h2><p>Tiptap is versatile enough to power a wide range of applications, from simple note-taking apps to complex content management systems.</p><h3>Common Applications</h3><ul><li><p><strong>Content Management Systems:</strong> Blog platforms, documentation sites</p></li><li><p><strong>Note-Taking Apps:</strong> Personal wikis, knowledge bases</p></li><li><p><strong>Collaborative Tools:</strong> Team workspaces, project management</p></li><li><p><strong>Email Clients:</strong> Rich email composition</p></li><li><p><strong>Social Platforms:</strong> Post creation, comments</p></li><li><p><strong>Educational Platforms:</strong> Course content, assignments</p></li></ul><h2>Community and Ecosystem</h2><p>Tiptap has a thriving community that contributes extensions, templates, and integrations. The ecosystem continues to grow with new extensions and tools being released regularly.</p><h3>Popular Community Extensions</h3><ul><li><p><strong>tiptap-extension-global-drag-handle:</strong> Drag and drop blocks</p></li><li><p><strong>tiptap-markdown:</strong> Markdown input/output support</p></li><li><p><strong>tiptap-extension-emoji:</strong> Emoji picker integration</p></li><li><p><strong>tiptap-extension-slash-command:</strong> Notion-style slash commands</p></li></ul><h2>Getting Started</h2><p>Ready to start building with Tiptap? The setup process is straightforward and you can have a working editor in minutes.</p><h3>Installation</h3><pre><code class="language-bash"># Install core packages\nnpm install @tiptap/react @tiptap/pm @tiptap/starter-kit\n\n# Install additional extensions as needed\nnpm install @tiptap/extension-table @tiptap/extension-image</code></pre><h3>Basic Setup</h3><pre><code class="language-typescript">import { useEditor, EditorContent } from \'@tiptap/react\'\nimport StarterKit from \'@tiptap/starter-kit\'\nimport Table from \'@tiptap/extension-table\'\nimport TableRow from \'@tiptap/extension-table-row\'\nimport TableCell from \'@tiptap/extension-table-cell\'\nimport TableHeader from \'@tiptap/extension-table-header\'\nimport Image from \'@tiptap/extension-image\'\n\nfunction App() {\n  const editor = useEditor({\n    extensions: [\n      StarterKit,\n      Table.configure({\n        resizable: true,\n      }),\n      TableRow,\n      TableHeader,\n      TableCell,\n      Image,\n    ],\n    content: \'Start editing...\',\n  })\n\n  return (\n    &lt;div&gt;\n      &lt;EditorContent editor={editor} /&gt;\n    &lt;/div&gt;\n  )\n}</code></pre><h2>Conclusion</h2><p>Tiptap represents the future of rich text editing on the web. Its headless architecture, extensive customization options, and powerful extension system make it the ideal choice for developers who need complete control over their editing experience. Whether you\'re building a simple blog or a complex collaborative platform, Tiptap provides the foundation you need to create exceptional user experiences.</p><h3>Next Steps</h3><p>Explore the official documentation, try out the interactive examples, and join the community to see what others are building with Tiptap. The possibilities are endless!</p>',
-  wordCount: 1245,
-  cover:
-    "https://images.unsplash.com/photo-1499951360447-b19be8fe80f5?w=1200&h=800&fit=crop",
-  author: "Tiptap Team",
-  createdAt: "Jan, 30 2025",
-  readingTime: 8,
-};
+// HTML
+export const htmlMock = `
+<h2>Welcome to Rich Text Editor</h2>
+<p>This comprehensive demo showcases all the powerful features of a modern rich text editor built with <strong>Tiptap</strong> and <strong>Radix UI</strong>. Explore text formatting, media embedding, and advanced content structures.</p>
 
-// Tiptap JSON Format - Same content in Tiptap's native JSON structure
+<h2>Text Formatting</h2>
+<p>Rich text editors support various text styles: <strong>bold text</strong>, <em>italic text</em>, <u>underlined text</u>, <s>strikethrough</s>, and <code>inline code</code>.</p>
+<p>You can also use <sub>subscript</sub> and <sup>superscript</sup>, or combine styles: <strong><em>bold and italic</em></strong>, <strong><u>bold and underline</u></strong>.</p>
+
+<h2>Headings Structure</h2>
+<p>Organize your content with multiple heading levels:</p>
+<h3>This is Heading 3</h3>
+<p>Headings help create a clear document hierarchy.</p>
+<h4>This is Heading 4</h4>
+<p>Use appropriate heading levels for better structure.</p>
+<h5>This is Heading 5</h5>
+<p>Even smaller headings are supported for detailed outlines.</p>
+
+<h2>Lists</h2>
+<h3>Unordered Lists</h3>
+<ul>
+  <li><p>First item in the list</p></li>
+  <li><p>Second item with <strong>bold text</strong></p></li>
+  <li><p>Third item with nested list:</p>
+    <ul>
+      <li><p>Nested item 1</p></li>
+      <li><p>Nested item 2 with <em>italic</em></p></li>
+      <li><p>Nested item 3</p></li>
+    </ul>
+  </li>
+  <li><p>Fourth item with <code>inline code</code></p></li>
+</ul>
+
+<h3>Ordered Lists</h3>
+<ol>
+  <li><p>First step: Install dependencies</p></li>
+  <li><p>Second step: Configure the editor</p></li>
+  <li><p>Third step: Customize extensions</p>
+    <ol>
+      <li><p>Add StarterKit</p></li>
+      <li><p>Configure Image extension</p></li>
+      <li><p>Set up Table support</p></li>
+    </ol>
+  </li>
+  <li><p>Final step: Deploy your application</p></li>
+</ol>
+
+<h2>Text Alignment</h2>
+<p style="text-align: left">This paragraph is left-aligned (default alignment for most text).</p>
+<p style="text-align: center">This paragraph is center-aligned, perfect for titles or important statements.</p>
+<p style="text-align: right">This paragraph is right-aligned, often used for signatures or timestamps.</p>
+<p style="text-align: justify">This paragraph uses justified alignment. When you have longer text content, justified alignment distributes the words evenly across the line width, creating clean and professional-looking edges on both the left and right sides of the text block.</p>
+
+<h2>Text Styling</h2>
+<p>Customize your text with <span style="color: #ff0000">custom colors</span> and <span style="background-color: #ffff00">background highlights</span> to emphasize important content.</p>
+<p>You can combine both: <span style="color: #ffffff; background-color: #3b82f6; padding: 2px 6px; border-radius: 3px;">Blue background with white text</span> creates a tag-like appearance.</p>
+
+<h2>Links</h2>
+<p>Add <a href="https://tiptap.dev" target="_blank" rel="noopener noreferrer">external links</a> to reference other resources, or create <a href="#internal">internal links</a> for navigation within your document.</p>
+<p>Links can also be <strong><a href="https://github.com/ndtrung341/next-tiptap" target="_blank">combined with text formatting</a></strong> for better visibility!</p>
+
+<h2>Images</h2>
+<p>Images can be embedded in two ways:</p>
+
+<h3>Standalone Images</h3>
+<p>Simple image without caption:</p>
+<img 
+  src="https://images.unsplash.com/photo-1499951360447-b19be8fe80f5?w=800&h=500&fit=crop" 
+  alt="Developer workspace"
+  data-width="800"
+  data-height="500"
+/>
+
+<h3>Images with Captions</h3>
+<p>Images wrapped in figure with caption:</p>
+<figure>
+  <img 
+    src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&h=500&fit=crop" 
+    alt="Coding on laptop"
+    data-width="800"
+    data-height="500"
+  />
+  <figcaption>A developer working on a modern laptop with dual monitors</figcaption>
+</figure>
+
+<figure>
+  <img 
+    src="https://images.unsplash.com/photo-1487058792275-0ad4aaf24ca7?w=800&h=500&fit=crop" 
+    alt="Clean desk setup"
+    data-width="800"
+    data-height="500"
+  />
+  <figcaption>Minimalist workspace setup with clean aesthetics</figcaption>
+</figure>
+
+<h2>Blockquotes</h2>
+<blockquote>
+  <p>"The best way to predict the future is to invent it." <strong>- Alan Kay</strong></p>
+</blockquote>
+
+<blockquote>
+  <p>Blockquotes are perfect for highlighting important quotes, testimonials, or citations. They can contain <strong>formatted text</strong>, <em>multiple paragraphs</em>, and even other elements.</p>
+  <p>This is the second paragraph in the blockquote, demonstrating multi-paragraph support.</p>
+</blockquote>
+
+<h2>Code Blocks</h2>
+<p>The editor supports syntax-highlighted code blocks with language selection:</p>
+
+<h3>JavaScript Example</h3>
+<pre><code class="language-javascript">// Function to create a greeting
+function greetUser(name) {
+  const greeting = \`Hello, \${name}! Welcome to Tiptap Editor.\`;
+  console.log(greeting);
+  return greeting;
+}
+
+// Usage example
+const message = greetUser('World');
+console.log(message);
+</code></pre>
+
+<h3>React Component Example</h3>
+<pre><code class="language-tsx">import { useRef } from 'react';
+import TiptapEditor, { type TiptapEditorRef } from '@/components/tiptap-editor';
+
+export default function MyEditor() {
+  const editorRef = useRef&lt;TiptapEditorRef&gt;(null);
+
+  const handleChange = (content: string) => {
+    console.log('Content updated:', content);
+  };
+
+  return (
+    &lt;TiptapEditor
+      ref={editorRef}
+      output="html"
+      minHeight={320}
+      onChange={handleChange}
+      placeholder="Start typing..."
+    /&gt;
+  );
+}
+</code></pre>
+
+<h3>Python Example</h3>
+<pre><code class="language-python">def fibonacci(n):
+    """Generate Fibonacci sequence up to n terms"""
+    a, b = 0, 1
+    result = []
+    
+    for _ in range(n):
+        result.append(a)
+        a, b = b, a + b
+    
+    return result
+
+# Generate first 10 Fibonacci numbers
+numbers = fibonacci(10)
+print(f"Fibonacci sequence: {numbers}")
+</code></pre>
+
+<h3>CSS Styling</h3>
+<pre><code class="language-css">:root {
+  --rte-editor-min-height: 320px;
+  --rte-editor-max-height: 640px;
+  --rte-editor-max-width: 700px;
+}
+
+.editor-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 2rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.editor-content:hover {
+  transform: translateY(-2px);
+  transition: transform 0.2s ease;
+}
+</code></pre>
+
+<h2>Tables</h2>
+<p>Create and edit tables with cell alignment and formatting:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: left"><p>Feature</p></th>
+      <th style="text-align: center"><p>Description</p></th>
+      <th style="text-align: center"><p>Status</p></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left"><p><strong>Text Formatting</strong></p></td>
+      <td style="text-align: center"><p>Bold, italic, underline, strikethrough, code</p></td>
+      <td style="text-align: center"><p>✅ Available</p></td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><p><strong>Code Blocks</strong></p></td>
+      <td style="text-align: center"><p>Syntax highlighting for 50+ languages</p></td>
+      <td style="text-align: center"><p>✅ Available</p></td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><p><strong>Images</strong></p></td>
+      <td style="text-align: center"><p>Upload, resize, and add captions</p></td>
+      <td style="text-align: center"><p>✅ Available</p></td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><p><strong>Tables</strong></p></td>
+      <td style="text-align: center"><p>Resizable columns with cell formatting</p></td>
+      <td style="text-align: center"><p>✅ Available</p></td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><p><strong>YouTube Embeds</strong></p></td>
+      <td style="text-align: center"><p>Direct video embedding</p></td>
+      <td style="text-align: center"><p>✅ Available</p></td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><p><strong>Drag & Drop</strong></p></td>
+      <td style="text-align: center"><p>Reorder content blocks</p></td>
+      <td style="text-align: center"><p>✅ Available</p></td>
+    </tr>
+  </tbody>
+</table>
+
+<h2>YouTube Embeds</h2>
+<p>Embed YouTube videos directly in your content:</p>
+<div class="youtube-embed" data-youtube-video>
+  <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ" width="640" height="360" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+</div>
+
+<h2>Installation Guide</h2>
+<p>Get started with the editor in just a few steps:</p>
+
+<h3>Clone and Install</h3>
+<pre><code class="language-bash"># Clone the repository
+git clone https://github.com/ndtrung341/next-tiptap.git
+
+# Navigate to project directory
+cd next-tiptap
+
+# Install dependencies
+pnpm install
+# or
+npm install
+# or
+yarn install
+</code></pre>
+
+<h3>Start Development</h3>
+<pre><code class="language-bash"># Start development server
+pnpm dev
+# or
+npm run dev
+# or
+yarn dev
+</code></pre>
+
+<h2>Editor Configuration</h2>
+<p>Here's a complete example of setting up the editor with custom configuration:</p>
+
+<pre><code class="language-tsx">import { useRef, useState } from 'react';
+import TiptapEditor, { type TiptapEditorRef } from '@/components/tiptap-editor';
+
+export default function MyApp() {
+  const editorRef = useRef&lt;TiptapEditorRef&gt;(null);
+  const [content, setContent] = useState('');
+
+  const handleChange = (html: string) => {
+    setContent(html);
+  };
+
+  const handleExport = () => {
+    const editor = editorRef.current;
+    if (editor) {
+      console.log('HTML:', editor.getHTML());
+      console.log('JSON:', editor.getJSON());
+      console.log('Words:', editor.storage.characterCount.words());
+    }
+  };
+
+  return (
+    &lt;div className="container"&gt;
+      &lt;TiptapEditor
+        ref={editorRef}
+        content={content}
+        output="html"
+        minHeight={320}
+        maxHeight={640}
+        onChange={handleChange}
+        placeholder={{
+          paragraph: 'Start typing...',
+          imageCaption: 'Add a caption (optional)'
+        }}
+      /&gt;
+      &lt;button onClick={handleExport}&gt;Export Content&lt;/button&gt;
+    &lt;/div&gt;
+  );
+}
+</code></pre>
+
+<h2>Keyboard Shortcuts</h2>
+<p>The editor supports common keyboard shortcuts for efficient editing:</p>
+<ul>
+  <li><p><code>Ctrl/Cmd + B</code> - <strong>Bold</strong></p></li>
+  <li><p><code>Ctrl/Cmd + I</code> - <em>Italic</em></p></li>
+  <li><p><code>Ctrl/Cmd + U</code> - <u>Underline</u></p></li>
+  <li><p><code>Ctrl/Cmd + Shift + S</code> - <s>Strikethrough</s></p></li>
+  <li><p><code>Ctrl/Cmd + E</code> - <code>Inline code</code></p></li>
+  <li><p><code>Ctrl/Cmd + Z</code> - Undo</p></li>
+  <li><p><code>Ctrl/Cmd + Shift + Z</code> - Redo</p></li>
+</ul>
+
+<figure>
+  <img 
+    src="https://images.unsplash.com/photo-1551650975-87deedd944c3?w=800&h=500&fit=crop" 
+    alt="Code editor interface"
+    data-width="800"
+    data-height="500"
+  />
+  <figcaption>Modern code editor with syntax highlighting and IntelliSense</figcaption>
+</figure>
+
+<h2>Conclusion</h2>
+<p>This editor provides a comprehensive set of features for creating rich, engaging content. Whether you're building a blog, documentation site, or content management system, it offers the flexibility and power you need.</p>
+
+<p style="text-align: center"><em>Try editing this content to explore all the features! Visit the <a href="https://next-tiptap.vercel.app/" target="_blank">live demo</a> to see it in action.</em></p>
+
+<p style="text-align: center"><strong>Built with ❤️ using Next.js and Tiptap</strong></p>
+`;
+
+// JSON
 export const jsonMock = {
-  title: "Tiptap: The Headless Rich Text Editor for Modern Web Applications",
-  content: {
-    type: "doc",
-    content: [
-      {
-        type: "heading",
-        attrs: { level: 2 },
-        content: [{ type: "text", text: "What is Tiptap?" }],
-      },
-      {
-        type: "paragraph",
-        content: [
-          {
-            type: "text",
-            text: "Tiptap is a headless, framework-agnostic rich text editor built on top of ProseMirror. Unlike traditional WYSIWYG editors, Tiptap gives you complete control over the user interface while providing a powerful and extensible editing experience. It's the perfect choice for developers who want to build custom editing experiences without sacrificing functionality.",
-          },
-        ],
-      },
-      {
-        type: "heading",
-        attrs: { level: 3 },
-        content: [{ type: "text", text: "Why Choose Tiptap?" }],
-      },
-      {
-        type: "paragraph",
-        content: [
-          {
-            type: "text",
-            text: "Tiptap stands out from other rich text editors by offering unparalleled flexibility and developer experience. It's designed to be extended, customized, and integrated seamlessly into any modern web application.",
-          },
-        ],
-      },
-      {
-        type: "bulletList",
-        content: [
-          {
-            type: "listItem",
-            content: [
-              {
-                type: "paragraph",
-                content: [
-                  {
-                    type: "text",
-                    marks: [{ type: "bold" }],
-                    text: "Headless Architecture:",
-                  },
-                  {
-                    type: "text",
-                    text: " Build your own UI with complete design freedom",
-                  },
-                ],
-              },
-            ],
-          },
-          {
-            type: "listItem",
-            content: [
-              {
-                type: "paragraph",
-                content: [
-                  {
-                    type: "text",
-                    marks: [{ type: "bold" }],
-                    text: "Framework Agnostic:",
-                  },
-                  {
-                    type: "text",
-                    text: " Works with React, Vue, Svelte, and vanilla JavaScript",
-                  },
-                ],
-              },
-            ],
-          },
-          {
-            type: "listItem",
-            content: [
-              {
-                type: "paragraph",
-                content: [
-                  {
-                    type: "text",
-                    marks: [{ type: "bold" }],
-                    text: "Extensible:",
-                  },
-                  {
-                    type: "text",
-                    text: " Create custom extensions or use community-built ones",
-                  },
-                ],
-              },
-            ],
-          },
-          {
-            type: "listItem",
-            content: [
-              {
-                type: "paragraph",
-                content: [
-                  {
-                    type: "text",
-                    marks: [{ type: "bold" }],
-                    text: "TypeScript First:",
-                  },
-                  {
-                    type: "text",
-                    text: " Full type safety and excellent IDE support",
-                  },
-                ],
-              },
-            ],
-          },
-          {
-            type: "listItem",
-            content: [
-              {
-                type: "paragraph",
-                content: [
-                  {
-                    type: "text",
-                    marks: [{ type: "bold" }],
-                    text: "Collaborative Editing:",
-                  },
-                  {
-                    type: "text",
-                    text: " Built-in support for real-time collaboration",
-                  },
-                ],
-              },
-            ],
-          },
-        ],
-      },
-      {
-        type: "figure",
-        content: [
-          {
-            type: "image",
-            attrs: {
-              src: "https://images.unsplash.com/photo-1499951360447-b19be8fe80f5?w=1200&h=700&fit=crop",
-              alt: "Developer working with Tiptap",
-              width: "85%",
-              "data-width": "1200",
-              "data-height": "700",
+  type: "doc",
+  content: [
+    {
+      type: "heading",
+      attrs: { level: 2 },
+      content: [{ type: "text", text: "Welcome to Rich Text Editor" }],
+    },
+    {
+      type: "paragraph",
+      content: [
+        {
+          type: "text",
+          text: "This comprehensive demo showcases all the powerful features of a modern rich text editor built with ",
+        },
+        { type: "text", marks: [{ type: "bold" }], text: "Tiptap" },
+        { type: "text", text: " and " },
+        { type: "text", marks: [{ type: "bold" }], text: "Radix UI" },
+        {
+          type: "text",
+          text: ". Explore text formatting, media embedding, and advanced content structures.",
+        },
+      ],
+    },
+    {
+      type: "heading",
+      attrs: { level: 2 },
+      content: [{ type: "text", text: "Text Formatting" }],
+    },
+    {
+      type: "paragraph",
+      content: [
+        {
+          type: "text",
+          text: "Rich text editors support various text styles: ",
+        },
+        { type: "text", marks: [{ type: "bold" }], text: "bold text" },
+        { type: "text", text: ", " },
+        { type: "text", marks: [{ type: "italic" }], text: "italic text" },
+        { type: "text", text: ", " },
+        {
+          type: "text",
+          marks: [{ type: "underline" }],
+          text: "underlined text",
+        },
+        { type: "text", text: ", " },
+        { type: "text", marks: [{ type: "strike" }], text: "strikethrough" },
+        { type: "text", text: ", and " },
+        { type: "text", marks: [{ type: "code" }], text: "inline code" },
+        { type: "text", text: "." },
+      ],
+    },
+    {
+      type: "paragraph",
+      content: [
+        { type: "text", text: "You can also use " },
+        { type: "text", marks: [{ type: "subscript" }], text: "subscript" },
+        { type: "text", text: " and " },
+        { type: "text", marks: [{ type: "superscript" }], text: "superscript" },
+        { type: "text", text: ", or combine styles: " },
+        {
+          type: "text",
+          marks: [{ type: "bold" }, { type: "italic" }],
+          text: "bold and italic",
+        },
+        { type: "text", text: ", " },
+        {
+          type: "text",
+          marks: [{ type: "bold" }, { type: "underline" }],
+          text: "bold and underline",
+        },
+        { type: "text", text: "." },
+      ],
+    },
+    {
+      type: "heading",
+      attrs: { level: 2 },
+      content: [{ type: "text", text: "Headings Structure" }],
+    },
+    {
+      type: "paragraph",
+      content: [
+        {
+          type: "text",
+          text: "Organize your content with multiple heading levels:",
+        },
+      ],
+    },
+    {
+      type: "heading",
+      attrs: { level: 3 },
+      content: [{ type: "text", text: "This is Heading 3" }],
+    },
+    {
+      type: "paragraph",
+      content: [
+        {
+          type: "text",
+          text: "Headings help create a clear document hierarchy.",
+        },
+      ],
+    },
+    {
+      type: "heading",
+      attrs: { level: 4 },
+      content: [{ type: "text", text: "This is Heading 4" }],
+    },
+    {
+      type: "paragraph",
+      content: [
+        {
+          type: "text",
+          text: "Use appropriate heading levels for better structure.",
+        },
+      ],
+    },
+    {
+      type: "heading",
+      attrs: { level: 5 },
+      content: [{ type: "text", text: "This is Heading 5" }],
+    },
+    {
+      type: "paragraph",
+      content: [
+        {
+          type: "text",
+          text: "Even smaller headings are supported for detailed outlines.",
+        },
+      ],
+    },
+    {
+      type: "heading",
+      attrs: { level: 2 },
+      content: [{ type: "text", text: "Lists" }],
+    },
+    {
+      type: "heading",
+      attrs: { level: 3 },
+      content: [{ type: "text", text: "Unordered Lists" }],
+    },
+    {
+      type: "bulletList",
+      content: [
+        {
+          type: "listItem",
+          content: [
+            {
+              type: "paragraph",
+              content: [{ type: "text", text: "First item in the list" }],
             },
-          },
-          {
-            type: "figcaption",
-            content: [
-              {
-                type: "text",
-                text: "Building custom rich text experiences with Tiptap's flexible architecture",
-              },
-            ],
-          },
-        ],
-      },
-      {
-        type: "heading",
-        attrs: { level: 2 },
-        content: [{ type: "text", text: "Core Features" }],
-      },
-      {
-        type: "paragraph",
-        content: [
-          {
-            type: "text",
-            text: "Tiptap comes packed with features that make it the go-to choice for modern web applications requiring rich text editing capabilities.",
-          },
-        ],
-      },
-      {
-        type: "heading",
-        attrs: { level: 3 },
-        content: [{ type: "text", text: "Rich Text Formatting" }],
-      },
-      {
-        type: "paragraph",
-        content: [
-          {
-            type: "text",
-            text: "Tiptap supports all standard text formatting options you'd expect from a modern editor, with the ability to customize and extend each one.",
-          },
-        ],
-      },
-      {
-        type: "codeBlock",
-        attrs: { language: "typescript" },
-        content: [
-          {
-            type: "text",
-            text: "import { useEditor, EditorContent } from '@tiptap/react'\nimport StarterKit from '@tiptap/starter-kit'\n\nfunction MyEditor() {\n  const editor = useEditor({\n    extensions: [StarterKit],\n    content: '<p>Hello Tiptap!</p>',\n  })\n\n  return <EditorContent editor={editor} />\n}",
-          },
-        ],
-      },
-      {
-        type: "heading",
-        attrs: { level: 3 },
-        content: [{ type: "text", text: "Built-in Extensions" }],
-      },
-      {
-        type: "paragraph",
-        content: [
-          {
-            type: "text",
-            text: "Tiptap provides a comprehensive set of extensions out of the box, covering everything from basic text formatting to advanced features like tables and code blocks.",
-          },
-        ],
-      },
-      {
-        type: "table",
-        content: [
-          {
-            type: "tableRow",
-            content: [
-              {
-                type: "tableHeader",
-                content: [
-                  {
-                    type: "paragraph",
-                    content: [{ type: "text", text: "Extension" }],
-                  },
-                ],
-              },
-              {
-                type: "tableHeader",
-                content: [
-                  {
-                    type: "paragraph",
-                    content: [{ type: "text", text: "Description" }],
-                  },
-                ],
-              },
-              {
-                type: "tableHeader",
-                content: [
-                  {
-                    type: "paragraph",
-                    content: [{ type: "text", text: "Use Case" }],
-                  },
-                ],
-              },
-            ],
-          },
-          {
-            type: "tableRow",
-            content: [
-              {
-                type: "tableCell",
-                content: [
-                  {
-                    type: "paragraph",
-                    content: [{ type: "text", text: "StarterKit" }],
-                  },
-                ],
-              },
-              {
-                type: "tableCell",
-                content: [
-                  {
-                    type: "paragraph",
-                    content: [
-                      { type: "text", text: "Bundle of essential extensions" },
-                    ],
-                  },
-                ],
-              },
-              {
-                type: "tableCell",
-                content: [
-                  {
-                    type: "paragraph",
-                    content: [
-                      { type: "text", text: "Quick setup for most projects" },
-                    ],
-                  },
-                ],
-              },
-            ],
-          },
-          {
-            type: "tableRow",
-            content: [
-              {
-                type: "tableCell",
-                content: [
-                  {
-                    type: "paragraph",
-                    content: [{ type: "text", text: "Table" }],
-                  },
-                ],
-              },
-              {
-                type: "tableCell",
-                content: [
-                  {
-                    type: "paragraph",
-                    content: [
-                      { type: "text", text: "Full-featured table support" },
-                    ],
-                  },
-                ],
-              },
-              {
-                type: "tableCell",
-                content: [
-                  {
-                    type: "paragraph",
-                    content: [
-                      { type: "text", text: "Data presentation, layouts" },
-                    ],
-                  },
-                ],
-              },
-            ],
-          },
-          {
-            type: "tableRow",
-            content: [
-              {
-                type: "tableCell",
-                content: [
-                  {
-                    type: "paragraph",
-                    content: [{ type: "text", text: "CodeBlock" }],
-                  },
-                ],
-              },
-              {
-                type: "tableCell",
-                content: [
-                  {
-                    type: "paragraph",
-                    content: [
-                      { type: "text", text: "Syntax-highlighted code blocks" },
-                    ],
-                  },
-                ],
-              },
-              {
-                type: "tableCell",
-                content: [
-                  {
-                    type: "paragraph",
-                    content: [
-                      { type: "text", text: "Technical documentation" },
-                    ],
-                  },
-                ],
-              },
-            ],
-          },
-          {
-            type: "tableRow",
-            content: [
-              {
-                type: "tableCell",
-                content: [
-                  {
-                    type: "paragraph",
-                    content: [{ type: "text", text: "Image" }],
-                  },
-                ],
-              },
-              {
-                type: "tableCell",
-                content: [
-                  {
-                    type: "paragraph",
-                    content: [
-                      {
-                        type: "text",
-                        text: "Image insertion and manipulation",
-                      },
-                    ],
-                  },
-                ],
-              },
-              {
-                type: "tableCell",
-                content: [
-                  {
-                    type: "paragraph",
-                    content: [{ type: "text", text: "Visual content" }],
-                  },
-                ],
-              },
-            ],
-          },
-          {
-            type: "tableRow",
-            content: [
-              {
-                type: "tableCell",
-                content: [
-                  {
-                    type: "paragraph",
-                    content: [{ type: "text", text: "Link" }],
-                  },
-                ],
-              },
-              {
-                type: "tableCell",
-                content: [
-                  {
-                    type: "paragraph",
-                    content: [{ type: "text", text: "Hyperlink management" }],
-                  },
-                ],
-              },
-              {
-                type: "tableCell",
-                content: [
-                  {
-                    type: "paragraph",
-                    content: [{ type: "text", text: "Navigation, references" }],
-                  },
-                ],
-              },
-            ],
-          },
-          {
-            type: "tableRow",
-            content: [
-              {
-                type: "tableCell",
-                content: [
-                  {
-                    type: "paragraph",
-                    content: [{ type: "text", text: "Collaboration" }],
-                  },
-                ],
-              },
-              {
-                type: "tableCell",
-                content: [
-                  {
-                    type: "paragraph",
-                    content: [
-                      { type: "text", text: "Real-time collaborative editing" },
-                    ],
-                  },
-                ],
-              },
-              {
-                type: "tableCell",
-                content: [
-                  {
-                    type: "paragraph",
-                    content: [{ type: "text", text: "Team workflows" }],
-                  },
-                ],
-              },
-            ],
-          },
-        ],
-      },
-      {
-        type: "blockquote",
-        content: [
-          {
-            type: "paragraph",
-            content: [
-              {
-                type: "text",
-                text: '"Tiptap\'s extensibility is unmatched. We were able to build a custom editor for our documentation platform in days, not weeks." - Engineering Team at Vercel',
-              },
-            ],
-          },
-        ],
-      },
-      {
-        type: "heading",
-        attrs: { level: 2 },
-        content: [{ type: "text", text: "Creating Custom Extensions" }],
-      },
-      {
-        type: "paragraph",
-        content: [
-          {
-            type: "text",
-            text: "One of Tiptap's most powerful features is the ability to create custom extensions tailored to your specific needs. Extensions can add new nodes, marks, or even completely new functionality.",
-          },
-        ],
-      },
-      {
-        type: "heading",
-        attrs: { level: 3 },
-        content: [{ type: "text", text: "Example: Custom Mention Extension" }],
-      },
-      {
-        type: "codeBlock",
-        attrs: { language: "typescript" },
-        content: [
-          {
-            type: "text",
-            text: "import { Node, mergeAttributes } from '@tiptap/core'\nimport { ReactNodeViewRenderer } from '@tiptap/react'\nimport MentionComponent from './MentionComponent'\n\nexport const Mention = Node.create({\n  name: 'mention',\n  \n  group: 'inline',\n  inline: true,\n  selectable: false,\n  atom: true,\n\n  addAttributes() {\n    return {\n      id: {\n        default: null,\n        parseHTML: element => element.getAttribute('data-id'),\n        renderHTML: attributes => ({\n          'data-id': attributes.id,\n        }),\n      },\n      label: {\n        default: null,\n        parseHTML: element => element.getAttribute('data-label'),\n        renderHTML: attributes => ({\n          'data-label': attributes.label,\n        }),\n      },\n    }\n  },\n\n  parseHTML() {\n    return [{ tag: 'span[data-mention]' }]\n  },\n\n  renderHTML({ HTMLAttributes }) {\n    return ['span', mergeAttributes({ 'data-mention': '' }, HTMLAttributes)]\n  },\n\n  addNodeView() {\n    return ReactNodeViewRenderer(MentionComponent)\n  },\n})",
-          },
-        ],
-      },
-      {
-        type: "figure",
-        content: [
-          {
-            type: "image",
-            attrs: {
-              src: "https://images.unsplash.com/photo-1551650975-87deedd944c3?w=1200&h=700&fit=crop",
-              alt: "Custom Tiptap extensions",
-              width: "75%",
-              "data-width": "1200",
-              "data-height": "700",
+          ],
+        },
+        {
+          type: "listItem",
+          content: [
+            {
+              type: "paragraph",
+              content: [
+                { type: "text", text: "Second item with " },
+                { type: "text", marks: [{ type: "bold" }], text: "bold text" },
+              ],
             },
-          },
-          {
-            type: "figcaption",
-            content: [
-              {
-                type: "text",
-                text: "Custom extensions enable unique editing experiences tailored to your application",
+          ],
+        },
+        {
+          type: "listItem",
+          content: [
+            {
+              type: "paragraph",
+              content: [{ type: "text", text: "Third item with nested list:" }],
+            },
+            {
+              type: "bulletList",
+              content: [
+                {
+                  type: "listItem",
+                  content: [
+                    {
+                      type: "paragraph",
+                      content: [{ type: "text", text: "Nested item 1" }],
+                    },
+                  ],
+                },
+                {
+                  type: "listItem",
+                  content: [
+                    {
+                      type: "paragraph",
+                      content: [
+                        { type: "text", text: "Nested item 2 with " },
+                        {
+                          type: "text",
+                          marks: [{ type: "italic" }],
+                          text: "italic",
+                        },
+                      ],
+                    },
+                  ],
+                },
+                {
+                  type: "listItem",
+                  content: [
+                    {
+                      type: "paragraph",
+                      content: [{ type: "text", text: "Nested item 3" }],
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+        {
+          type: "listItem",
+          content: [
+            {
+              type: "paragraph",
+              content: [
+                { type: "text", text: "Fourth item with " },
+                {
+                  type: "text",
+                  marks: [{ type: "code" }],
+                  text: "inline code",
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    },
+    {
+      type: "heading",
+      attrs: { level: 3 },
+      content: [{ type: "text", text: "Ordered Lists" }],
+    },
+    {
+      type: "orderedList",
+      content: [
+        {
+          type: "listItem",
+          content: [
+            {
+              type: "paragraph",
+              content: [
+                { type: "text", text: "First step: Install dependencies" },
+              ],
+            },
+          ],
+        },
+        {
+          type: "listItem",
+          content: [
+            {
+              type: "paragraph",
+              content: [
+                { type: "text", text: "Second step: Configure the editor" },
+              ],
+            },
+          ],
+        },
+        {
+          type: "listItem",
+          content: [
+            {
+              type: "paragraph",
+              content: [
+                { type: "text", text: "Third step: Customize extensions" },
+              ],
+            },
+            {
+              type: "orderedList",
+              content: [
+                {
+                  type: "listItem",
+                  content: [
+                    {
+                      type: "paragraph",
+                      content: [{ type: "text", text: "Add StarterKit" }],
+                    },
+                  ],
+                },
+                {
+                  type: "listItem",
+                  content: [
+                    {
+                      type: "paragraph",
+                      content: [
+                        { type: "text", text: "Configure Image extension" },
+                      ],
+                    },
+                  ],
+                },
+                {
+                  type: "listItem",
+                  content: [
+                    {
+                      type: "paragraph",
+                      content: [{ type: "text", text: "Set up Table support" }],
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+        {
+          type: "listItem",
+          content: [
+            {
+              type: "paragraph",
+              content: [
+                { type: "text", text: "Final step: Deploy your application" },
+              ],
+            },
+          ],
+        },
+      ],
+    },
+    {
+      type: "heading",
+      attrs: { level: 2 },
+      content: [{ type: "text", text: "Text Alignment" }],
+    },
+    {
+      type: "paragraph",
+      attrs: { textAlign: "left" },
+      content: [
+        {
+          type: "text",
+          text: "This paragraph is left-aligned (default alignment for most text).",
+        },
+      ],
+    },
+    {
+      type: "paragraph",
+      attrs: { textAlign: "center" },
+      content: [
+        {
+          type: "text",
+          text: "This paragraph is center-aligned, perfect for titles or important statements.",
+        },
+      ],
+    },
+    {
+      type: "paragraph",
+      attrs: { textAlign: "right" },
+      content: [
+        {
+          type: "text",
+          text: "This paragraph is right-aligned, often used for signatures or timestamps.",
+        },
+      ],
+    },
+    {
+      type: "paragraph",
+      attrs: { textAlign: "justify" },
+      content: [
+        {
+          type: "text",
+          text: "This paragraph uses justified alignment. When you have longer text content, justified alignment distributes the words evenly across the line width, creating clean and professional-looking edges on both the left and right sides of the text block.",
+        },
+      ],
+    },
+    {
+      type: "heading",
+      attrs: { level: 2 },
+      content: [{ type: "text", text: "Text Styling" }],
+    },
+    {
+      type: "paragraph",
+      content: [
+        { type: "text", text: "Customize your text with " },
+        {
+          type: "text",
+          marks: [{ type: "textStyle", attrs: { color: "#ff0000" } }],
+          text: "custom colors",
+        },
+        { type: "text", text: " and " },
+        {
+          type: "text",
+          marks: [{ type: "textStyle", attrs: { backgroundColor: "#ffff00" } }],
+          text: "background highlights",
+        },
+        { type: "text", text: " to emphasize important content." },
+      ],
+    },
+    {
+      type: "paragraph",
+      content: [
+        { type: "text", text: "You can combine both: " },
+        {
+          type: "text",
+          marks: [
+            {
+              type: "textStyle",
+              attrs: { color: "#ffffff", backgroundColor: "#3b82f6" },
+            },
+          ],
+          text: "Blue background with white text",
+        },
+        { type: "text", text: " creates a tag-like appearance." },
+      ],
+    },
+    {
+      type: "heading",
+      attrs: { level: 2 },
+      content: [{ type: "text", text: "Links" }],
+    },
+    {
+      type: "paragraph",
+      content: [
+        { type: "text", text: "Add " },
+        {
+          type: "text",
+          marks: [
+            {
+              type: "link",
+              attrs: {
+                href: "https://tiptap.dev",
+                target: "_blank",
+                rel: "noopener noreferrer",
               },
-            ],
-          },
-        ],
-      },
-      {
-        type: "heading",
-        attrs: { level: 2 },
-        content: [{ type: "text", text: "Collaborative Editing" }],
-      },
-      {
-        type: "paragraph",
-        content: [
-          {
-            type: "text",
-            text: "Tiptap includes first-class support for collaborative editing through its Collaboration extension, powered by Yjs. Multiple users can edit the same document simultaneously with automatic conflict resolution.",
-          },
-        ],
-      },
-      {
-        type: "heading",
-        attrs: { level: 3 },
-        content: [{ type: "text", text: "Setting Up Collaboration" }],
-      },
-      {
-        type: "codeBlock",
-        attrs: { language: "typescript" },
-        content: [
-          {
-            type: "text",
-            text: "import { useEditor } from '@tiptap/react'\nimport StarterKit from '@tiptap/starter-kit'\nimport Collaboration from '@tiptap/extension-collaboration'\nimport CollaborationCursor from '@tiptap/extension-collaboration-cursor'\nimport * as Y from 'yjs'\nimport { WebrtcProvider } from 'y-webrtc'\n\nconst ydoc = new Y.Doc()\nconst provider = new WebrtcProvider('document-name', ydoc)\n\nfunction CollaborativeEditor() {\n  const editor = useEditor({\n    extensions: [\n      StarterKit.configure({\n        history: false, // Disable history for collaboration\n      }),\n      Collaboration.configure({\n        document: ydoc,\n      }),\n      CollaborationCursor.configure({\n        provider: provider,\n        user: {\n          name: 'John Doe',\n          color: '#f783ac',\n        },\n      }),\n    ],\n  })\n\n  return <EditorContent editor={editor} />\n}",
-          },
-        ],
-      },
-      {
-        type: "heading",
-        attrs: { level: 2 },
-        content: [{ type: "text", text: "Styling and Customization" }],
-      },
-      {
-        type: "paragraph",
-        content: [
-          {
-            type: "text",
-            text: "Since Tiptap is headless, you have complete control over the styling. You can use any CSS framework or custom styles to create the perfect look for your application.",
-          },
-        ],
-      },
-      {
-        type: "heading",
-        attrs: { level: 3 },
-        content: [{ type: "text", text: "Popular Styling Approaches" }],
-      },
-      {
-        type: "orderedList",
-        content: [
-          {
-            type: "listItem",
-            content: [
-              {
-                type: "paragraph",
-                content: [
-                  {
-                    type: "text",
-                    marks: [{ type: "bold" }],
-                    text: "Tailwind CSS:",
-                  },
-                  {
-                    type: "text",
-                    text: " Utility-first approach for rapid development",
-                  },
-                ],
+            },
+          ],
+          text: "external links",
+        },
+        { type: "text", text: " to reference other resources, or create " },
+        {
+          type: "text",
+          marks: [{ type: "link", attrs: { href: "#internal" } }],
+          text: "internal links",
+        },
+        { type: "text", text: " for navigation within your document." },
+      ],
+    },
+    {
+      type: "paragraph",
+      content: [
+        { type: "text", text: "Links can also be " },
+        {
+          type: "text",
+          marks: [
+            { type: "bold" },
+            {
+              type: "link",
+              attrs: {
+                href: "https://github.com/ndtrung341/next-tiptap",
+                target: "_blank",
               },
-            ],
+            },
+          ],
+          text: "combined with text formatting",
+        },
+        { type: "text", text: " for better visibility!" },
+      ],
+    },
+    {
+      type: "heading",
+      attrs: { level: 2 },
+      content: [{ type: "text", text: "Images" }],
+    },
+    {
+      type: "paragraph",
+      content: [{ type: "text", text: "Images can be embedded in two ways:" }],
+    },
+    {
+      type: "heading",
+      attrs: { level: 3 },
+      content: [{ type: "text", text: "Standalone Images" }],
+    },
+    {
+      type: "paragraph",
+      content: [{ type: "text", text: "Simple image without caption:" }],
+    },
+    {
+      type: "image",
+      attrs: {
+        src: "https://images.unsplash.com/photo-1499951360447-b19be8fe80f5?w=800&h=500&fit=crop",
+        alt: "Developer workspace",
+        naturalWidth: "800",
+        naturalHeight: "500",
+      },
+    },
+    {
+      type: "heading",
+      attrs: { level: 3 },
+      content: [{ type: "text", text: "Images with Captions" }],
+    },
+    {
+      type: "paragraph",
+      content: [
+        { type: "text", text: "Images wrapped in figure with caption:" },
+      ],
+    },
+    {
+      type: "imageFigure",
+      content: [
+        {
+          type: "image",
+          attrs: {
+            src: "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&h=500&fit=crop",
+            alt: "Coding on laptop",
+            naturalWidth: "800",
+            naturalHeight: "500",
           },
-          {
-            type: "listItem",
-            content: [
-              {
-                type: "paragraph",
-                content: [
-                  {
-                    type: "text",
-                    marks: [{ type: "bold" }],
-                    text: "CSS Modules:",
-                  },
-                  {
-                    type: "text",
-                    text: " Scoped styles for component isolation",
-                  },
-                ],
+        },
+        {
+          type: "imageCaption",
+          content: [
+            {
+              type: "text",
+              text: "A developer working on a modern laptop with dual monitors",
+            },
+          ],
+        },
+      ],
+    },
+    {
+      type: "imageFigure",
+      content: [
+        {
+          type: "image",
+          attrs: {
+            src: "https://images.unsplash.com/photo-1487058792275-0ad4aaf24ca7?w=800&h=500&fit=crop",
+            alt: "Clean desk setup",
+            naturalWidth: "800",
+            naturalHeight: "500",
+          },
+        },
+        {
+          type: "imageCaption",
+          content: [
+            {
+              type: "text",
+              text: "Minimalist workspace setup with clean aesthetics",
+            },
+          ],
+        },
+      ],
+    },
+    {
+      type: "heading",
+      attrs: { level: 2 },
+      content: [{ type: "text", text: "Blockquotes" }],
+    },
+    {
+      type: "blockquote",
+      content: [
+        {
+          type: "paragraph",
+          content: [
+            {
+              type: "text",
+              text: '"The best way to predict the future is to invent it." ',
+            },
+            { type: "text", marks: [{ type: "bold" }], text: "- Alan Kay" },
+          ],
+        },
+      ],
+    },
+    {
+      type: "blockquote",
+      content: [
+        {
+          type: "paragraph",
+          content: [
+            {
+              type: "text",
+              text: "Blockquotes are perfect for highlighting important quotes, testimonials, or citations. They can contain ",
+            },
+            { type: "text", marks: [{ type: "bold" }], text: "formatted text" },
+            { type: "text", text: ", " },
+            {
+              type: "text",
+              marks: [{ type: "italic" }],
+              text: "multiple paragraphs",
+            },
+            { type: "text", text: ", and even other elements." },
+          ],
+        },
+        {
+          type: "paragraph",
+          content: [
+            {
+              type: "text",
+              text: "This is the second paragraph in the blockquote, demonstrating multi-paragraph support.",
+            },
+          ],
+        },
+      ],
+    },
+    {
+      type: "heading",
+      attrs: { level: 2 },
+      content: [{ type: "text", text: "Code Blocks" }],
+    },
+    {
+      type: "paragraph",
+      content: [
+        {
+          type: "text",
+          text: "The editor supports syntax-highlighted code blocks with language selection:",
+        },
+      ],
+    },
+    {
+      type: "heading",
+      attrs: { level: 3 },
+      content: [{ type: "text", text: "JavaScript Example" }],
+    },
+    {
+      type: "codeBlock",
+      attrs: { language: "javascript" },
+      content: [
+        {
+          type: "text",
+          text: "// Function to create a greeting\nfunction greetUser(name) {\n  const greeting = `Hello, ${name}! Welcome to Tiptap Editor.`;\n  console.log(greeting);\n  return greeting;\n}\n\n// Usage example\nconst message = greetUser('World');\nconsole.log(message);",
+        },
+      ],
+    },
+    {
+      type: "heading",
+      attrs: { level: 3 },
+      content: [{ type: "text", text: "React Component Example" }],
+    },
+    {
+      type: "codeBlock",
+      attrs: { language: "tsx" },
+      content: [
+        {
+          type: "text",
+          text: "import { useRef } from 'react';\nimport TiptapEditor, { type TiptapEditorRef } from '@/components/tiptap-editor';\n\nexport default function MyEditor() {\n  const editorRef = useRef<TiptapEditorRef>(null);\n\n  const handleChange = (content: string) => {\n    console.log('Content updated:', content);\n  };\n\n  return (\n    <TiptapEditor\n      ref={editorRef}\n      output=\"html\"\n      minHeight={320}\n      onChange={handleChange}\n      placeholder=\"Start typing...\"\n    />\n  );\n}",
+        },
+      ],
+    },
+    {
+      type: "heading",
+      attrs: { level: 3 },
+      content: [{ type: "text", text: "Python Example" }],
+    },
+    {
+      type: "codeBlock",
+      attrs: { language: "python" },
+      content: [
+        {
+          type: "text",
+          text: 'def fibonacci(n):\n    """Generate Fibonacci sequence up to n terms"""\n    a, b = 0, 1\n    result = []\n    \n    for _ in range(n):\n        result.append(a)\n        a, b = b, a + b\n    \n    return result\n\n# Generate first 10 Fibonacci numbers\nnumbers = fibonacci(10)\nprint(f"Fibonacci sequence: {numbers}")',
+        },
+      ],
+    },
+    {
+      type: "heading",
+      attrs: { level: 3 },
+      content: [{ type: "text", text: "CSS Styling" }],
+    },
+    {
+      type: "codeBlock",
+      attrs: { language: "css" },
+      content: [
+        {
+          type: "text",
+          text: ":root {\n  --rte-editor-min-height: 320px;\n  --rte-editor-max-height: 640px;\n  --rte-editor-max-width: 700px;\n}\n\n.editor-container {\n  display: flex;\n  flex-direction: column;\n  gap: 1rem;\n  padding: 2rem;\n  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);\n  border-radius: 8px;\n  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);\n}\n\n.editor-content:hover {\n  transform: translateY(-2px);\n  transition: transform 0.2s ease;\n}",
+        },
+      ],
+    },
+    {
+      type: "heading",
+      attrs: { level: 2 },
+      content: [{ type: "text", text: "Tables" }],
+    },
+    {
+      type: "paragraph",
+      content: [
+        {
+          type: "text",
+          text: "Create and edit tables with cell alignment and formatting:",
+        },
+      ],
+    },
+    {
+      type: "table",
+      content: [
+        {
+          type: "tableRow",
+          content: [
+            {
+              type: "tableHeader",
+              attrs: { textAlign: "left" },
+              content: [
+                {
+                  type: "paragraph",
+                  content: [{ type: "text", text: "Feature" }],
+                },
+              ],
+            },
+            {
+              type: "tableHeader",
+              attrs: { textAlign: "center" },
+              content: [
+                {
+                  type: "paragraph",
+                  content: [{ type: "text", text: "Description" }],
+                },
+              ],
+            },
+            {
+              type: "tableHeader",
+              attrs: { textAlign: "center" },
+              content: [
+                {
+                  type: "paragraph",
+                  content: [{ type: "text", text: "Status" }],
+                },
+              ],
+            },
+          ],
+        },
+        {
+          type: "tableRow",
+          content: [
+            {
+              type: "tableCell",
+              attrs: { textAlign: "left" },
+              content: [
+                {
+                  type: "paragraph",
+                  content: [
+                    {
+                      type: "text",
+                      marks: [{ type: "bold" }],
+                      text: "Text Formatting",
+                    },
+                  ],
+                },
+              ],
+            },
+            {
+              type: "tableCell",
+              attrs: { textAlign: "center" },
+              content: [
+                {
+                  type: "paragraph",
+                  content: [
+                    {
+                      type: "text",
+                      text: "Bold, italic, underline, strikethrough, code",
+                    },
+                  ],
+                },
+              ],
+            },
+            {
+              type: "tableCell",
+              attrs: { textAlign: "center" },
+              content: [
+                {
+                  type: "paragraph",
+                  content: [{ type: "text", text: "✅ Available" }],
+                },
+              ],
+            },
+          ],
+        },
+        {
+          type: "tableRow",
+          content: [
+            {
+              type: "tableCell",
+              attrs: { textAlign: "left" },
+              content: [
+                {
+                  type: "paragraph",
+                  content: [
+                    {
+                      type: "text",
+                      marks: [{ type: "bold" }],
+                      text: "Code Blocks",
+                    },
+                  ],
+                },
+              ],
+            },
+            {
+              type: "tableCell",
+              attrs: { textAlign: "center" },
+              content: [
+                {
+                  type: "paragraph",
+                  content: [
+                    {
+                      type: "text",
+                      text: "Syntax highlighting for 50+ languages",
+                    },
+                  ],
+                },
+              ],
+            },
+            {
+              type: "tableCell",
+              attrs: { textAlign: "center" },
+              content: [
+                {
+                  type: "paragraph",
+                  content: [{ type: "text", text: "✅ Available" }],
+                },
+              ],
+            },
+          ],
+        },
+        {
+          type: "tableRow",
+          content: [
+            {
+              type: "tableCell",
+              attrs: { textAlign: "left" },
+              content: [
+                {
+                  type: "paragraph",
+                  content: [
+                    { type: "text", marks: [{ type: "bold" }], text: "Images" },
+                  ],
+                },
+              ],
+            },
+            {
+              type: "tableCell",
+              attrs: { textAlign: "center" },
+              content: [
+                {
+                  type: "paragraph",
+                  content: [
+                    { type: "text", text: "Upload, resize, and add captions" },
+                  ],
+                },
+              ],
+            },
+            {
+              type: "tableCell",
+              attrs: { textAlign: "center" },
+              content: [
+                {
+                  type: "paragraph",
+                  content: [{ type: "text", text: "✅ Available" }],
+                },
+              ],
+            },
+          ],
+        },
+        {
+          type: "tableRow",
+          content: [
+            {
+              type: "tableCell",
+              attrs: { textAlign: "left" },
+              content: [
+                {
+                  type: "paragraph",
+                  content: [
+                    { type: "text", marks: [{ type: "bold" }], text: "Tables" },
+                  ],
+                },
+              ],
+            },
+            {
+              type: "tableCell",
+              attrs: { textAlign: "center" },
+              content: [
+                {
+                  type: "paragraph",
+                  content: [
+                    {
+                      type: "text",
+                      text: "Resizable columns with cell formatting",
+                    },
+                  ],
+                },
+              ],
+            },
+            {
+              type: "tableCell",
+              attrs: { textAlign: "center" },
+              content: [
+                {
+                  type: "paragraph",
+                  content: [{ type: "text", text: "✅ Available" }],
+                },
+              ],
+            },
+          ],
+        },
+        {
+          type: "tableRow",
+          content: [
+            {
+              type: "tableCell",
+              attrs: { textAlign: "left" },
+              content: [
+                {
+                  type: "paragraph",
+                  content: [
+                    {
+                      type: "text",
+                      marks: [{ type: "bold" }],
+                      text: "YouTube Embeds",
+                    },
+                  ],
+                },
+              ],
+            },
+            {
+              type: "tableCell",
+              attrs: { textAlign: "center" },
+              content: [
+                {
+                  type: "paragraph",
+                  content: [{ type: "text", text: "Direct video embedding" }],
+                },
+              ],
+            },
+            {
+              type: "tableCell",
+              attrs: { textAlign: "center" },
+              content: [
+                {
+                  type: "paragraph",
+                  content: [{ type: "text", text: "✅ Available" }],
+                },
+              ],
+            },
+          ],
+        },
+        {
+          type: "tableRow",
+          content: [
+            {
+              type: "tableCell",
+              attrs: { textAlign: "left" },
+              content: [
+                {
+                  type: "paragraph",
+                  content: [
+                    {
+                      type: "text",
+                      marks: [{ type: "bold" }],
+                      text: "Drag & Drop",
+                    },
+                  ],
+                },
+              ],
+            },
+            {
+              type: "tableCell",
+              attrs: { textAlign: "center" },
+              content: [
+                {
+                  type: "paragraph",
+                  content: [{ type: "text", text: "Reorder content blocks" }],
+                },
+              ],
+            },
+            {
+              type: "tableCell",
+              attrs: { textAlign: "center" },
+              content: [
+                {
+                  type: "paragraph",
+                  content: [{ type: "text", text: "✅ Available" }],
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    },
+    {
+      type: "heading",
+      attrs: { level: 2 },
+      content: [{ type: "text", text: "YouTube Embeds" }],
+    },
+    {
+      type: "paragraph",
+      content: [
+        {
+          type: "text",
+          text: "Embed YouTube videos directly in your content:",
+        },
+      ],
+    },
+    {
+      type: "youtube",
+      attrs: {
+        src: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+        width: 640,
+        height: 360,
+      },
+    },
+    {
+      type: "heading",
+      attrs: { level: 2 },
+      content: [{ type: "text", text: "Installation Guide" }],
+    },
+    {
+      type: "paragraph",
+      content: [
+        {
+          type: "text",
+          text: "Get started with the editor in just a few steps:",
+        },
+      ],
+    },
+    {
+      type: "heading",
+      attrs: { level: 3 },
+      content: [{ type: "text", text: "Clone and Install" }],
+    },
+    {
+      type: "codeBlock",
+      attrs: { language: "bash" },
+      content: [
+        {
+          type: "text",
+          text: "# Clone the repository\ngit clone https://github.com/ndtrung341/next-tiptap.git\n\n# Navigate to project directory\ncd next-tiptap\n\n# Install dependencies\npnpm install\n# or\nnpm install\n# or\nyarn install",
+        },
+      ],
+    },
+    {
+      type: "heading",
+      attrs: { level: 3 },
+      content: [{ type: "text", text: "Start Development" }],
+    },
+    {
+      type: "codeBlock",
+      attrs: { language: "bash" },
+      content: [
+        {
+          type: "text",
+          text: "# Start development server\npnpm dev\n# or\nnpm run dev\n# or\nyarn dev",
+        },
+      ],
+    },
+    {
+      type: "heading",
+      attrs: { level: 2 },
+      content: [{ type: "text", text: "Editor Configuration" }],
+    },
+    {
+      type: "paragraph",
+      content: [
+        {
+          type: "text",
+          text: "Here's a complete example of setting up the editor with custom configuration:",
+        },
+      ],
+    },
+    {
+      type: "codeBlock",
+      attrs: { language: "tsx" },
+      content: [
+        {
+          type: "text",
+          text: "import { useRef, useState } from 'react';\nimport TiptapEditor, { type TiptapEditorRef } from '@/components/tiptap-editor';\n\nexport default function MyApp() {\n  const editorRef = useRef<TiptapEditorRef>(null);\n  const [content, setContent] = useState('');\n\n  const handleChange = (html: string) => {\n    setContent(html);\n  };\n\n  const handleExport = () => {\n    const editor = editorRef.current;\n    if (editor) {\n      console.log('HTML:', editor.getHTML());\n      console.log('JSON:', editor.getJSON());\n      console.log('Words:', editor.storage.characterCount.words());\n    }\n  };\n\n  return (\n    <div className=\"container\">\n      <TiptapEditor\n        ref={editorRef}\n        content={content}\n        output=\"html\"\n        minHeight={320}\n        maxHeight={640}\n        onChange={handleChange}\n        placeholder={{\n          paragraph: 'Start typing...',\n          imageCaption: 'Add a caption (optional)'\n        }}\n      />\n      <button onClick={handleExport}>Export Content</button>\n    </div>\n  );\n}",
+        },
+      ],
+    },
+    {
+      type: "heading",
+      attrs: { level: 2 },
+      content: [{ type: "text", text: "Keyboard Shortcuts" }],
+    },
+    {
+      type: "paragraph",
+      content: [
+        {
+          type: "text",
+          text: "The editor supports common keyboard shortcuts for efficient editing:",
+        },
+      ],
+    },
+    {
+      type: "bulletList",
+      content: [
+        {
+          type: "listItem",
+          content: [
+            {
+              type: "paragraph",
+              content: [
+                {
+                  type: "text",
+                  marks: [{ type: "code" }],
+                  text: "Ctrl/Cmd + B",
+                },
+                { type: "text", text: " - " },
+                { type: "text", marks: [{ type: "bold" }], text: "Bold" },
+              ],
+            },
+          ],
+        },
+        {
+          type: "listItem",
+          content: [
+            {
+              type: "paragraph",
+              content: [
+                {
+                  type: "text",
+                  marks: [{ type: "code" }],
+                  text: "Ctrl/Cmd + I",
+                },
+                { type: "text", text: " - " },
+                { type: "text", marks: [{ type: "italic" }], text: "Italic" },
+              ],
+            },
+          ],
+        },
+        {
+          type: "listItem",
+          content: [
+            {
+              type: "paragraph",
+              content: [
+                {
+                  type: "text",
+                  marks: [{ type: "code" }],
+                  text: "Ctrl/Cmd + U",
+                },
+                { type: "text", text: " - " },
+                {
+                  type: "text",
+                  marks: [{ type: "underline" }],
+                  text: "Underline",
+                },
+              ],
+            },
+          ],
+        },
+        {
+          type: "listItem",
+          content: [
+            {
+              type: "paragraph",
+              content: [
+                {
+                  type: "text",
+                  marks: [{ type: "code" }],
+                  text: "Ctrl/Cmd + Shift + S",
+                },
+                { type: "text", text: " - " },
+                {
+                  type: "text",
+                  marks: [{ type: "strike" }],
+                  text: "Strikethrough",
+                },
+              ],
+            },
+          ],
+        },
+        {
+          type: "listItem",
+          content: [
+            {
+              type: "paragraph",
+              content: [
+                {
+                  type: "text",
+                  marks: [{ type: "code" }],
+                  text: "Ctrl/Cmd + E",
+                },
+                { type: "text", text: " - " },
+                {
+                  type: "text",
+                  marks: [{ type: "code" }],
+                  text: "Inline code",
+                },
+              ],
+            },
+          ],
+        },
+        {
+          type: "listItem",
+          content: [
+            {
+              type: "paragraph",
+              content: [
+                {
+                  type: "text",
+                  marks: [{ type: "code" }],
+                  text: "Ctrl/Cmd + Z",
+                },
+                { type: "text", text: " - Undo" },
+              ],
+            },
+          ],
+        },
+        {
+          type: "listItem",
+          content: [
+            {
+              type: "paragraph",
+              content: [
+                {
+                  type: "text",
+                  marks: [{ type: "code" }],
+                  text: "Ctrl/Cmd + Shift + Z",
+                },
+                { type: "text", text: " - Redo" },
+              ],
+            },
+          ],
+        },
+      ],
+    },
+    {
+      type: "imageFigure",
+      content: [
+        {
+          type: "image",
+          attrs: {
+            src: "https://images.unsplash.com/photo-1551650975-87deedd944c3?w=800&h=500&fit=crop",
+            alt: "Code editor interface",
+            naturalWidth: "800",
+            naturalHeight: "500",
+          },
+        },
+        {
+          type: "imageCaption",
+          content: [
+            {
+              type: "text",
+              text: "Modern code editor with syntax highlighting and IntelliSense",
+            },
+          ],
+        },
+      ],
+    },
+    {
+      type: "heading",
+      attrs: { level: 2 },
+      content: [{ type: "text", text: "Conclusion" }],
+    },
+    {
+      type: "paragraph",
+      content: [
+        {
+          type: "text",
+          text: "This editor provides a comprehensive set of features for creating rich, engaging content. Whether you're building a blog, documentation site, or content management system, it offers the flexibility and power you need.",
+        },
+      ],
+    },
+    {
+      type: "paragraph",
+      attrs: { textAlign: "center" },
+      content: [
+        {
+          type: "text",
+          marks: [{ type: "italic" }],
+          text: "Try editing this content to explore all the features! Visit the ",
+        },
+        {
+          type: "text",
+          marks: [
+            { type: "italic" },
+            {
+              type: "link",
+              attrs: {
+                href: "https://next-tiptap.vercel.app/",
+                target: "_blank",
               },
-            ],
-          },
-          {
-            type: "listItem",
-            content: [
-              {
-                type: "paragraph",
-                content: [
-                  {
-                    type: "text",
-                    marks: [{ type: "bold" }],
-                    text: "Styled Components:",
-                  },
-                  { type: "text", text: " CSS-in-JS for dynamic styling" },
-                ],
-              },
-            ],
-          },
-          {
-            type: "listItem",
-            content: [
-              {
-                type: "paragraph",
-                content: [
-                  {
-                    type: "text",
-                    marks: [{ type: "bold" }],
-                    text: "shadcn/ui:",
-                  },
-                  {
-                    type: "text",
-                    text: " Pre-built components with Tiptap integration",
-                  },
-                ],
-              },
-            ],
-          },
-        ],
-      },
-      {
-        type: "heading",
-        attrs: { level: 2 },
-        content: [{ type: "text", text: "Performance Optimization" }],
-      },
-      {
-        type: "paragraph",
-        content: [
-          {
-            type: "text",
-            text: "Tiptap is built with performance in mind, but there are several strategies you can employ to ensure optimal performance even with large documents.",
-          },
-        ],
-      },
-      {
-        type: "bulletList",
-        content: [
-          {
-            type: "listItem",
-            content: [
-              {
-                type: "paragraph",
-                content: [
-                  {
-                    type: "text",
-                    marks: [{ type: "bold" }],
-                    text: "Lazy Loading:",
-                  },
-                  { type: "text", text: " Load extensions only when needed" },
-                ],
-              },
-            ],
-          },
-          {
-            type: "listItem",
-            content: [
-              {
-                type: "paragraph",
-                content: [
-                  {
-                    type: "text",
-                    marks: [{ type: "bold" }],
-                    text: "Debouncing:",
-                  },
-                  {
-                    type: "text",
-                    text: " Reduce update frequency for auto-save features",
-                  },
-                ],
-              },
-            ],
-          },
-          {
-            type: "listItem",
-            content: [
-              {
-                type: "paragraph",
-                content: [
-                  {
-                    type: "text",
-                    marks: [{ type: "bold" }],
-                    text: "Virtual Scrolling:",
-                  },
-                  {
-                    type: "text",
-                    text: " Handle extremely long documents efficiently",
-                  },
-                ],
-              },
-            ],
-          },
-          {
-            type: "listItem",
-            content: [
-              {
-                type: "paragraph",
-                content: [
-                  {
-                    type: "text",
-                    marks: [{ type: "bold" }],
-                    text: "Code Splitting:",
-                  },
-                  {
-                    type: "text",
-                    text: " Separate editor code from main bundle",
-                  },
-                ],
-              },
-            ],
-          },
-        ],
-      },
-      {
-        type: "heading",
-        attrs: { level: 2 },
-        content: [{ type: "text", text: "Integration Examples" }],
-      },
-      {
-        type: "paragraph",
-        content: [
-          {
-            type: "text",
-            text: "Tiptap integrates seamlessly with popular frameworks and tools. Here are some common integration patterns.",
-          },
-        ],
-      },
-      {
-        type: "heading",
-        attrs: { level: 3 },
-        content: [{ type: "text", text: "Next.js Integration" }],
-      },
-      {
-        type: "codeBlock",
-        attrs: { language: "typescript" },
-        content: [
-          {
-            type: "text",
-            text: "'use client'\n\nimport { useEditor, EditorContent } from '@tiptap/react'\nimport StarterKit from '@tiptap/starter-kit'\nimport { useEffect } from 'react'\n\nexport default function TiptapEditor({ \n  initialContent, \n  onChange \n}: { \n  initialContent: string\n  onChange: (html: string) => void \n}) {\n  const editor = useEditor({\n    extensions: [StarterKit],\n    content: initialContent,\n    onUpdate: ({ editor }) => {\n      onChange(editor.getHTML())\n    },\n  })\n\n  useEffect(() => {\n    return () => {\n      editor?.destroy()\n    }\n  }, [editor])\n\n  return (\n    <div className=\"prose max-w-none\">\n      <EditorContent editor={editor} />\n    </div>\n  )\n}",
-          },
-        ],
-      },
-      {
-        type: "heading",
-        attrs: { level: 2 },
-        content: [{ type: "text", text: "Use Cases" }],
-      },
-      {
-        type: "paragraph",
-        content: [
-          {
-            type: "text",
-            text: "Tiptap is versatile enough to power a wide range of applications, from simple note-taking apps to complex content management systems.",
-          },
-        ],
-      },
-      {
-        type: "heading",
-        attrs: { level: 3 },
-        content: [{ type: "text", text: "Common Applications" }],
-      },
-      {
-        type: "bulletList",
-        content: [
-          {
-            type: "listItem",
-            content: [
-              {
-                type: "paragraph",
-                content: [
-                  {
-                    type: "text",
-                    marks: [{ type: "bold" }],
-                    text: "Content Management Systems:",
-                  },
-                  {
-                    type: "text",
-                    text: " Blog platforms, documentation sites",
-                  },
-                ],
-              },
-            ],
-          },
-          {
-            type: "listItem",
-            content: [
-              {
-                type: "paragraph",
-                content: [
-                  {
-                    type: "text",
-                    marks: [{ type: "bold" }],
-                    text: "Note-Taking Apps:",
-                  },
-                  { type: "text", text: " Personal wikis, knowledge bases" },
-                ],
-              },
-            ],
-          },
-          {
-            type: "listItem",
-            content: [
-              {
-                type: "paragraph",
-                content: [
-                  {
-                    type: "text",
-                    marks: [{ type: "bold" }],
-                    text: "Collaborative Tools:",
-                  },
-                  {
-                    type: "text",
-                    text: " Team workspaces, project management",
-                  },
-                ],
-              },
-            ],
-          },
-          {
-            type: "listItem",
-            content: [
-              {
-                type: "paragraph",
-                content: [
-                  {
-                    type: "text",
-                    marks: [{ type: "bold" }],
-                    text: "Email Clients:",
-                  },
-                  { type: "text", text: " Rich email composition" },
-                ],
-              },
-            ],
-          },
-          {
-            type: "listItem",
-            content: [
-              {
-                type: "paragraph",
-                content: [
-                  {
-                    type: "text",
-                    marks: [{ type: "bold" }],
-                    text: "Social Platforms:",
-                  },
-                  { type: "text", text: " Post creation, comments" },
-                ],
-              },
-            ],
-          },
-          {
-            type: "listItem",
-            content: [
-              {
-                type: "paragraph",
-                content: [
-                  {
-                    type: "text",
-                    marks: [{ type: "bold" }],
-                    text: "Educational Platforms:",
-                  },
-                  { type: "text", text: " Course content, assignments" },
-                ],
-              },
-            ],
-          },
-        ],
-      },
-      {
-        type: "heading",
-        attrs: { level: 2 },
-        content: [{ type: "text", text: "Community and Ecosystem" }],
-      },
-      {
-        type: "paragraph",
-        content: [
-          {
-            type: "text",
-            text: "Tiptap has a thriving community that contributes extensions, templates, and integrations. The ecosystem continues to grow with new extensions and tools being released regularly.",
-          },
-        ],
-      },
-      {
-        type: "heading",
-        attrs: { level: 3 },
-        content: [{ type: "text", text: "Popular Community Extensions" }],
-      },
-      {
-        type: "bulletList",
-        content: [
-          {
-            type: "listItem",
-            content: [
-              {
-                type: "paragraph",
-                content: [
-                  {
-                    type: "text",
-                    marks: [{ type: "bold" }],
-                    text: "tiptap-extension-global-drag-handle:",
-                  },
-                  { type: "text", text: " Drag and drop blocks" },
-                ],
-              },
-            ],
-          },
-          {
-            type: "listItem",
-            content: [
-              {
-                type: "paragraph",
-                content: [
-                  {
-                    type: "text",
-                    marks: [{ type: "bold" }],
-                    text: "tiptap-markdown:",
-                  },
-                  { type: "text", text: " Markdown input/output support" },
-                ],
-              },
-            ],
-          },
-          {
-            type: "listItem",
-            content: [
-              {
-                type: "paragraph",
-                content: [
-                  {
-                    type: "text",
-                    marks: [{ type: "bold" }],
-                    text: "tiptap-extension-emoji:",
-                  },
-                  { type: "text", text: " Emoji picker integration" },
-                ],
-              },
-            ],
-          },
-          {
-            type: "listItem",
-            content: [
-              {
-                type: "paragraph",
-                content: [
-                  {
-                    type: "text",
-                    marks: [{ type: "bold" }],
-                    text: "tiptap-extension-slash-command:",
-                  },
-                  { type: "text", text: " Notion-style slash commands" },
-                ],
-              },
-            ],
-          },
-        ],
-      },
-      {
-        type: "heading",
-        attrs: { level: 2 },
-        content: [{ type: "text", text: "Getting Started" }],
-      },
-      {
-        type: "paragraph",
-        content: [
-          {
-            type: "text",
-            text: "Ready to start building with Tiptap? The setup process is straightforward and you can have a working editor in minutes.",
-          },
-        ],
-      },
-      {
-        type: "heading",
-        attrs: { level: 3 },
-        content: [{ type: "text", text: "Installation" }],
-      },
-      {
-        type: "codeBlock",
-        attrs: { language: "bash" },
-        content: [
-          {
-            type: "text",
-            text: "# Install core packages\nnpm install @tiptap/react @tiptap/pm @tiptap/starter-kit\n\n# Install additional extensions as needed\nnpm install @tiptap/extension-table @tiptap/extension-image",
-          },
-        ],
-      },
-      {
-        type: "heading",
-        attrs: { level: 3 },
-        content: [{ type: "text", text: "Basic Setup" }],
-      },
-      {
-        type: "codeBlock",
-        attrs: { language: "typescript" },
-        content: [
-          {
-            type: "text",
-            text: "import { useEditor, EditorContent } from '@tiptap/react'\nimport StarterKit from '@tiptap/starter-kit'\nimport Table from '@tiptap/extension-table'\nimport TableRow from '@tiptap/extension-table-row'\nimport TableCell from '@tiptap/extension-table-cell'\nimport TableHeader from '@tiptap/extension-table-header'\nimport Image from '@tiptap/extension-image'\n\nfunction App() {\n  const editor = useEditor({\n    extensions: [\n      StarterKit,\n      Table.configure({\n        resizable: true,\n      }),\n      TableRow,\n      TableHeader,\n      TableCell,\n      Image,\n    ],\n    content: '<p>Start editing...</p>',\n  })\n\n  return (\n    <div>\n      <EditorContent editor={editor} />\n    </div>\n  )\n}",
-          },
-        ],
-      },
-      {
-        type: "heading",
-        attrs: { level: 2 },
-        content: [{ type: "text", text: "Conclusion" }],
-      },
-      {
-        type: "paragraph",
-        content: [
-          {
-            type: "text",
-            text: "Tiptap represents the future of rich text editing on the web. Its headless architecture, extensive customization options, and powerful extension system make it the ideal choice for developers who need complete control over their editing experience. Whether you're building a simple blog or a complex collaborative platform, Tiptap provides the foundation you need to create exceptional user experiences.",
-          },
-        ],
-      },
-      {
-        type: "heading",
-        attrs: { level: 3 },
-        content: [{ type: "text", text: "Next Steps" }],
-      },
-      {
-        type: "paragraph",
-        content: [
-          {
-            type: "text",
-            text: "Explore the official documentation, try out the interactive examples, and join the community to see what others are building with Tiptap. The possibilities are endless!",
-          },
-        ],
-      },
-    ],
-  },
-  wordCount: 1245,
-  cover:
-    "https://images.unsplash.com/photo-1499951360447-b19be8fe80f5?w=1200&h=800&fit=crop",
-  author: "Tiptap Team",
-  createdAt: "Jan, 30 2025",
-  readingTime: 8,
+            },
+          ],
+          text: "live demo",
+        },
+        {
+          type: "text",
+          marks: [{ type: "italic" }],
+          text: " to see it in action.",
+        },
+      ],
+    },
+    {
+      type: "paragraph",
+      attrs: { textAlign: "center" },
+      content: [
+        {
+          type: "text",
+          marks: [{ type: "bold" }],
+          text: "Built with ❤️ using Next.js and Tiptap",
+        },
+      ],
+    },
+  ],
 };
 
-// Export both formats for easy use
 export const mockData = {
+  title: "Rich Text Editor Features Demo",
   html: htmlMock,
   json: jsonMock,
+  wordCount: 892,
+  cover:
+    "https://images.unsplash.com/photo-1499951360447-b19be8fe80f5?w=1200&h=800&fit=crop",
+  author: "Demo Content",
+  createdAt: "Nov 10, 2025",
+  readingTime: 5,
 };

@@ -1,27 +1,24 @@
 import React, { useCallback } from "react";
 
-import { EmojiItem } from "@tiptap/extension-emoji";
-
+import { useEmoji } from "../../hooks/use-emoji";
 import EmojiPicker from "../emoji-picker";
 import { MenuButton } from "../menu-button";
 import { useTiptapEditor } from "../provider";
 
 const EmojiPopover = () => {
-  const { editor } = useTiptapEditor();
+  const { emojis, handleSelect } = useEmoji();
+  // const { editor } = useTiptapEditor();
 
-  const handleSelect = useCallback(
-    (emoji: EmojiItem) => {
-      editor.chain().focus().setEmoji(emoji.name).run();
-    },
-    [editor]
-  );
+  // const handleSelect = useCallback(
+  //   (emoji: EmojiItem) => {
+  //     editor.chain().focus().insertContent(emoji.emoji!).run();
+  //   },
+  //   [editor]
+  // );
 
   return (
     <MenuButton type="popover" icon={"Emoji"} hideArrow tooltip={"Emoji"}>
-      <EmojiPicker
-        emojis={editor.storage.emoji.emojis}
-        onSelect={handleSelect}
-      />
+      <EmojiPicker emojis={emojis} onSelect={handleSelect} />
     </MenuButton>
   );
 };

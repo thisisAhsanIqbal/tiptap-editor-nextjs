@@ -1,5 +1,5 @@
 /** @jsxImportSource @tiptap/core */
-import { NodeSelection, Plugin, PluginKey } from "@tiptap/pm/state";
+import { NodeSelection } from "@tiptap/pm/state";
 import {
   type CommandProps,
   type JSONContent,
@@ -122,16 +122,28 @@ export const ImageFigure = Figure.extend(() => {
         removeImage:
           () =>
           ({ state, tr, dispatch }: CommandProps) => {
-            // Find target node from selection
-            const target = findParentNode(
-              (node) =>
-                node.type.name === this.name || node.type.name === Image.name
-            )(state.selection);
-            if (!target) return false;
+            const { selection } = state;
+            const { $anchor } = selection;
 
-            // Delete the node
+            let depth = $anchor.depth;
+            let pos = $anchor.pos;
+
+            while (depth > 0) {
+              pos = $anchor.before(depth);
+              depth--;
+            }
+
+            const node = state.doc.nodeAt(pos);
+
+            if (
+              !node ||
+              (node.type.name !== this.name && node.type.name !== Image.name)
+            ) {
+              return false;
+            }
+
             if (dispatch) {
-              tr.deleteRange(target.pos, target.pos + target.node.nodeSize);
+              tr.deleteRange(pos, pos + node.nodeSize);
               dispatch(tr);
             }
 
@@ -144,59 +156,59 @@ export const ImageFigure = Figure.extend(() => {
 
 export default ImageFigure;
 
-export function imageFigureDragPlugin(extension: any) {
-  let draggedNode: NodeSelection | null = null;
+// export function imageFigureDragPlugin(extension: any) {
+//   let draggedNode: NodeSelection | null = null;
 
-  return new Plugin({
-    key: new PluginKey("imageFigureDrag"),
-    props: {
-      handleDOMEvents: {
-        dragstart: (view, event) => {
-          // Only handle dragstart from an <img> inside a figure
-          if (!event.dataTransfer || !event.target) return false;
-          const target = event.target as HTMLElement;
-          if (!(target instanceof HTMLImageElement)) return false;
+//   return new Plugin({
+//     key: new PluginKey("imageFigureDrag"),
+//     props: {
+//       handleDOMEvents: {
+//         dragstart: (view, event) => {
+//           // Only handle dragstart from an <img> inside a figure
+//           if (!event.dataTransfer || !event.target) return false;
+//           const target = event.target as HTMLElement;
+//           if (!(target instanceof HTMLImageElement)) return false;
 
-          // Get the position of the dragged image
-          const pos = view.posAtDOM(target, 0);
-          const $pos = view.state.doc.resolve(pos);
+//           // Get the position of the dragged image
+//           const pos = view.posAtDOM(target, 0);
+//           const $pos = view.state.doc.resolve(pos);
 
-          // Check if the image is part of a figure node
-          if ($pos.parent.type.name !== extension.name) {
-            return false;
-          }
+//           // Check if the image is part of a figure node
+//           if ($pos.parent.type.name !== extension.name) {
+//             return false;
+//           }
 
-          const nodeStart = $pos.before($pos.depth);
-          draggedNode = NodeSelection.create(view.state.doc, nodeStart);
+//           const nodeStart = $pos.before($pos.depth);
+//           draggedNode = NodeSelection.create(view.state.doc, nodeStart);
 
-          const draggedSlice = draggedNode.content();
-          const { dom, text, slice } = view.serializeForClipboard(draggedSlice);
+//           const draggedSlice = draggedNode.content();
+//           const { dom, text, slice } = view.serializeForClipboard(draggedSlice);
 
-          // Set dataTransfer
-          event.dataTransfer.clearData();
-          event.dataTransfer.setData("text/html", dom.innerHTML);
-          event.dataTransfer.setData("text/plain", text);
-          event.dataTransfer.effectAllowed = "copyMove";
+//           // Set dataTransfer
+//           event.dataTransfer.clearData();
+//           event.dataTransfer.setData("text/html", dom.innerHTML);
+//           event.dataTransfer.setData("text/plain", text);
+//           event.dataTransfer.effectAllowed = "copyMove";
 
-          // ProseMirror flag
-          (view as any).dragging = { slice, move: event.ctrlKey };
+//           // ProseMirror flag
+//           (view as any).dragging = { slice, move: event.ctrlKey };
 
-          return true;
-        },
+//           return true;
+//         },
 
-        drop: (view) => {
-          if (draggedNode) {
-            view.dispatch(view.state.tr.setSelection(draggedNode));
-            draggedNode = null;
-          }
-        },
+//         drop: (view) => {
+//           if (draggedNode) {
+//             view.dispatch(view.state.tr.setSelection(draggedNode));
+//             draggedNode = null;
+//           }
+//         },
 
-        dragend: () => {
-          draggedNode = null;
-        },
-      },
-    },
-  });
-}
+//         dragend: () => {
+//           draggedNode = null;
+//         },
+//       },
+//     },
+//   });
+// }
 
 // /** // * Handle drag-and-drop behavior for imageFigure nodes. // */ // addProseMirrorPlugins() { // let draggedNode: NodeSelection | null; // return [ // new Plugin({ // props: { // handleDOMEvents: { // dragstart: (view, event) => { // // Only handle dragstart from an <img> inside a figure of this type // if (!event.dataTransfer || !event.target) return false; // const target = event.target as HTMLElement; // if (!(target instanceof HTMLImageElement)) return false; // // Get the position of the dragged image // const pos = view.posAtDOM(target, 0); // const $pos = view.state.doc.resolve(pos); // // Check if the image is part of a figure node // if ($pos.parent.type !== this.type) { // return false; // } // // Set up drag data // const nodeStart = $pos.before($pos.depth); // draggedNode = NodeSelection.create(view.state.doc, nodeStart); // const draggedSlice = draggedNode.content(); // const { dom, text, slice } = // view.serializeForClipboard(draggedSlice); // // const { dom, text, slice } = serializeForClipboard( // // view, // // draggedSlice // // ); // // Populate dataTransfer // event.dataTransfer.clearData(); // event.dataTransfer.setData("text/html", dom.innerHTML); // event.dataTransfer.setData("text/plain", text); // event.dataTransfer.effectAllowed = "copyMove"; // view.dragging = { slice: slice, move: event.ctrlKey }; // return true; // }, // drop: (view) => { // if (draggedNode) { // view.dispatch(view.state.tr.setSelection(draggedNode)); // draggedNode = null; // } // }, // dragend: () => { // draggedNode = null; // }, // }, // }, // }), // ]; // }, // });

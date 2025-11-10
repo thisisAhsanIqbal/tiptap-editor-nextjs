@@ -1,36 +1,78 @@
-import data from "emojibase-data/en/data.json";
-import messages from "emojibase-data/en/messages.json";
-import shortcodes from "emojibase-data/en/shortcodes/emojibase.json";
+import { getStorage, setStorage } from "./storage";
 
-import { capitalize } from "./utils";
+const EMOJI_BASE_URL = "https://cdn.jsdelivr.net/npm/emojibase-data";
+const EMOJI_DEFAULT_VERSION = "latest";
+const EMOJI_DEFAULT_LOCALE = "en";
+const EMOJI_CACHE_KEY = "emojis";
 
-import type { EmojiItem } from "@tiptap/extension-emoji";
+export type EmojiItem = {
+  name: string;
+  emoji: string;
+  tags: string[];
+  group?: string;
+  version?: number;
+};
 
-export function getEmojis(): EmojiItem[] {
-  const groupMap = new Map(messages.groups.map((g) => [g.order, g.message]));
+type EmojiCache = {
+  data: EmojiItem[];
+  version: string;
+  locale: string;
+};
 
-  return data
-    .filter(({ label, group }) => {
-      return !(
-        group === 2 || // Group 2 = "Component" - technical Unicode components, not real emojis
-        label.startsWith("regional") ||
-        label.startsWith("flag:") ||
-        label.startsWith("flag ")
-      );
-    })
-    .map((emoji) => {
-      const hexcode = emoji.hexcode;
-      const shortcodeList =
-        (shortcodes as Record<string, string[]>)[hexcode] || [];
+export async function getEmojiData(
+  version: string = EMOJI_DEFAULT_VERSION,
+  locale: string = EMOJI_DEFAULT_LOCALE
+): Promise<EmojiItem[]> {
+  const cached = getStorage<EmojiCache>(localStorage, EMOJI_CACHE_KEY);
 
-      return {
-        name: capitalize(emoji.label),
+  if (cached) {
+    return cached.data;
+  }
+
+  return fetchEmojiData(version, locale);
+}
+
+async function fetchEmojiData(
+  version: string,
+  locale: string
+): Promise<EmojiItem[]> {
+  const baseUrl = `${EMOJI_BASE_URL}@${version}/${locale}`;
+
+  try {
+    const [data, messages] = await Promise.all([
+      fetch(`${baseUrl}/data.json`).then((res) => res.json()),
+      fetch(`${baseUrl}/messages.json`).then((res) => res.json()),
+    ]);
+
+    const groupMap = new Map(
+      messages.groups.map((g: any) => [g.order, g.message])
+    );
+
+    const emojiData: EmojiItem[] = data
+      .filter(({ label, group }: any) => {
+        return !(
+          group === 2 ||
+          label.startsWith("regional") ||
+          label.startsWith("flag:")
+        );
+      })
+      .map((emoji: any) => ({
+        name: emoji.label.charAt(0).toUpperCase() + emoji.label.slice(1),
         emoji: emoji.emoji,
         tags: emoji.tags || [],
-        group: groupMap.get(emoji.group!),
-        shortcodes: shortcodeList,
+        group: groupMap.get(emoji.group),
         version: emoji.version,
-        emoticons: undefined,
-      };
+      }));
+
+    setStorage<EmojiCache>(localStorage, EMOJI_CACHE_KEY, {
+      data: emojiData,
+      version,
+      locale,
     });
+
+    return emojiData;
+  } catch (error) {
+    console.error("Error fetching emoji resources:", error);
+    return [];
+  }
 }

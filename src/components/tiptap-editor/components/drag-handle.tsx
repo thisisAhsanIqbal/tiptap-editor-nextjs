@@ -33,22 +33,6 @@ export const DragHandle = () => {
     });
   }, [editor]);
 
-  const refreshDragHandle = useCallback(() => {
-    requestAnimationFrame(() => {
-      const domNode = getSelectedDOM(editor);
-      if (!domNode) return;
-
-      const rect = domNode.getBoundingClientRect();
-      const event = new MouseEvent("mousemove", {
-        bubbles: true,
-        cancelable: true,
-        clientX: rect.left + 10,
-        clientY: rect.top + rect.height / 2,
-      });
-      editor.view.dom.dispatchEvent(event);
-    });
-  }, [editor]);
-
   const menuPosition = useMemo(() => {
     return {
       middleware: [
@@ -78,7 +62,7 @@ export const DragHandle = () => {
     (direction: "up" | "down") => {
       const success = moveNode(editor, direction);
       if (success) {
-        refreshDragHandle();
+        setOpen(false);
         scrollToNode();
       }
     },
@@ -107,13 +91,6 @@ export const DragHandle = () => {
     return true;
   }, [editor, node, nodePos]);
 
-  const handleCut = useCallback(async () => {
-    const success = await handleCopy();
-    if (success) {
-      handleDelete();
-    }
-  }, [editor, node, nodePos]);
-
   const handleDuplicate = useCallback(() => {
     if (!editor || !node || nodePos < 0) return false;
 
@@ -130,6 +107,13 @@ export const DragHandle = () => {
       from: nodePos,
       to: nodePos + node.nodeSize,
     });
+  }, [editor, node, nodePos]);
+
+  const handleCut = useCallback(async () => {
+    const success = await handleCopy();
+    if (success) {
+      handleDelete();
+    }
   }, [editor, node, nodePos]);
 
   if (!editor) return null;

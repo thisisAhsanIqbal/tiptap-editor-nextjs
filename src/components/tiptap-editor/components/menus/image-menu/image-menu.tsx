@@ -18,7 +18,6 @@ export const ImageMenu = () => {
     remove,
     download,
   } = useImage();
-
   const [isEditAltText, setIsEditAltText] = useState(false);
 
   const handleAltTextApply = useCallback(
