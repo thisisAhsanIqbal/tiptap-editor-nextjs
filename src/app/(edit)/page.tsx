@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
 
 import { useRouter, useSearchParams } from "next/navigation";
 
@@ -11,7 +11,7 @@ import ActionBar from "./_components/action-bar";
 import PostForm from "./_components/post-form";
 import "./style.scss";
 
-export default function EditPage() {
+function EditPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const postId = searchParams.get("id") || undefined;
@@ -80,5 +80,19 @@ export default function EditPage() {
         onCreateNew={createNewPost}
       />
     </div>
+  );
+}
+
+export default function EditPage() {
+  return (
+    <Suspense fallback={
+      <div className="flex items-center justify-center h-[calc(100vh-56px)]">
+        <div className="text-lg text-slate-600 dark:text-slate-300">
+          Loading...
+        </div>
+      </div>
+    }>
+      <EditPageContent />
+    </Suspense>
   );
 }
