@@ -27,6 +27,25 @@ export const Link = TiptapLink.extend({
       ...this.parent?.(),
       autolink: false,
       openOnClick: false,
+      protocols: ["http", "https"],
+      defaultProtocol: "https",
+      enableClickSelection: true,
+      linkOnPaste: true,
+      validate: (url: string) => {
+        try {
+          new URL(url);
+          return true;
+        } catch {
+          return false;
+        }
+      },
+      isAllowedUri: (url: string, ctx) => {
+        return ctx.defaultValidate(url);
+      },
+      shouldAutoLink: (url: string) => {
+        return false; // Disabled since autolink is false
+      },
+      HTMLAttributes: {},
     };
   },
 
