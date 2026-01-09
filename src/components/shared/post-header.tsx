@@ -6,7 +6,7 @@ import { LuCalendarDays, LuClock } from "react-icons/lu";
 
 interface PostHeaderProps {
   title: string;
-  cover: string;
+  cover?: string | null;
   author: string;
   createdAt: string;
   readingTime: number;
@@ -58,14 +58,16 @@ const PostHeader = ({
         {title}
       </h1>
 
-      <Image
-        src={cover}
-        alt={title}
-        width={1932}
-        height={1087}
-        className="my-10 rounded-lg"
-        priority
-      />
+      {cover && (
+        <Image
+          src={cover}
+          alt={title}
+          width={1932}
+          height={1087}
+          className="my-10 rounded-lg"
+          priority
+        />
+      )}
     </div>
   );
 };

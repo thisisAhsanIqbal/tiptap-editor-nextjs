@@ -2,19 +2,19 @@
 
 import { useState } from "react";
 
-import { useRouter, useSearchParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 
 import { useExport } from "@/hooks/use-export";
 import { usePost } from "@/hooks/use-post";
 
-import ActionBar from "./_components/action-bar";
-import PostForm from "./_components/post-form";
-import "./style.scss";
+import ActionBar from "../../(edit)/_components/action-bar";
+import PostForm from "../../(edit)/_components/post-form";
+import "../../(edit)/style.scss";
 
-export default function EditPage() {
+export default function EditPostPage() {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const postId = searchParams.get("id") || undefined;
+  const params = useParams();
+  const postId = params.id as string;
   const [editable, setEditable] = useState(true);
   const { debouncedSave, savePost, saveStatus, isLoading, post, error, createNewPost } = usePost(postId);
   const { exportToDocx } = useExport();

@@ -20,7 +20,13 @@ const Header = () => {
           <Logo width={120} />
         </Link>
 
-        <div className="flex gap-5 px-3">
+        <div className="flex items-center gap-5 px-3">
+          <Link
+            href="/posts"
+            className="text-slate-700 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors font-medium"
+          >
+            All Posts
+          </Link>
           <ThemeSwitcher />
           <Link href="https://github.com/thisisAhsanIqbal/tiptap-editor-nextjs/tree/main">
             <GithubIcon className="size-5" />
