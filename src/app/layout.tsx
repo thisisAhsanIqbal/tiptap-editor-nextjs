@@ -16,10 +16,10 @@ export const metadata: Metadata = {
   description:
     "Build powerful rich text editors with Next Tiptap - a feature-rich WYSIWYG editor built with Tiptap, React, and Next.js. Includes tables, images, code blocks, YouTube embeds, drag & drop, and more. Free and open source.",
   keywords: "Tiptap, WYSIWYG editor, Rich text editor, React editor, Next.js editor, Tiptap editor, React rich text, Next.js rich text, WYSIWYG React, content editor, text editor component, React text editor, Next.js text editor, Tiptap React, ProseMirror, Radix UI",
-  metadataBase: new URL(`https://next-tiptap.vercel.app`),
+  metadataBase: new URL(`https://tiptap-editor-iota-nine.vercel.app`),
   openGraph: {
     type: "website",
-    url: `https://next-tiptap.vercel.app`,
+    url: `https://tiptap-editor-iota-nine.vercel.app`,
     title: "Next Tiptap Editor - Modern WYSIWYG Rich Text Editor for React & Next.js",
     description:
       "Build powerful rich text editors with Next Tiptap - a feature-rich WYSIWYG editor built with Tiptap, React, and Next.js. Includes tables, images, code blocks, YouTube embeds, drag & drop, and more.",
@@ -34,7 +34,7 @@ export const metadata: Metadata = {
       "Build powerful rich text editors with Next Tiptap - a feature-rich WYSIWYG editor for React and Next.js applications.",
   },
   alternates: {
-    canonical: "https://next-tiptap.vercel.app",
+    canonical: "https://tiptap-editor-iota-nine.vercel.app",
   },
 };
 

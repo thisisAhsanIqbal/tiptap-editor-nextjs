@@ -328,7 +328,7 @@ export default function MyApp() {
 <h2>Conclusion</h2>
 <p>This editor provides a comprehensive set of features for creating rich, engaging content. Whether you're building a blog, documentation site, or content management system, it offers the flexibility and power you need.</p>
 
-<p style="text-align: center"><em>Try editing this content to explore all the features! Visit the <a href="https://next-tiptap.vercel.app/" target="_blank">live demo</a> to see it in action.</em></p>
+<p style="text-align: center"><em>Try editing this content to explore all the features! Visit the <a href="https://tiptap-editor-iota-nine.vercel.app/" target="_blank">live demo</a> to see it in action.</em></p>
 
 <p style="text-align: center"><strong>Built with ❤️ using Next.js and Tiptap</strong></p>
 `;
@@ -1599,7 +1599,7 @@ export const jsonMock = {
             {
               type: "link",
               attrs: {
-                href: "https://next-tiptap.vercel.app/",
+                href: "https://tiptap-editor-iota-nine.vercel.app/",
                 target: "_blank",
               },
             },
