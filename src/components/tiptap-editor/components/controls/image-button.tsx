@@ -1,4 +1,4 @@
-import React, { ChangeEvent, Fragment, useCallback, useRef } from "react";
+import React, { ChangeEvent, Fragment, useCallback, useRef, useState } from "react";
 
 import { useImage } from "../../hooks/use-image";
 import { MenuButton } from "../menu-button";
@@ -6,19 +6,63 @@ import { MenuButton } from "../menu-button";
 const ImageButton = () => {
   const { canInsert, insert } = useImage();
   const fileInput = useRef<HTMLInputElement>(null);
+  const [uploading, setUploading] = useState(false);
 
   const handleClick = useCallback(() => {
     fileInput.current?.click();
   }, []);
 
+  const uploadImageToCloudinary = async (file: File) => {
+    const formData = new FormData();
+    formData.append("file", file);
+
+    try {
+      const response = await fetch("/api/images", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to upload image");
+      }
+
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error("Upload error:", error);
+      throw error;
+    }
+  };
+
   const onUpload = useCallback(
-    (e: ChangeEvent<HTMLInputElement>) => {
+    async (e: ChangeEvent<HTMLInputElement>) => {
       const target = e.target;
       const file = target.files?.[0];
 
-      if (file?.type.startsWith("image/")) {
-        const url = URL.createObjectURL(file);
-        insert({ src: url, alt: file.name });
+      if (!file?.type.startsWith("image/")) {
+        target.value = "";
+        return;
+      }
+
+      setUploading(true);
+
+      try {
+        // Upload to Cloudinary
+        const uploadedImage = await uploadImageToCloudinary(file);
+
+        // Insert image with Cloudinary URL and dimensions
+        insert({
+          src: uploadedImage.url,
+          alt: uploadedImage.display_name || file.name,
+          width: uploadedImage.width,
+          height: uploadedImage.height,
+        });
+      } catch (error) {
+        console.error("Error uploading image:", error);
+        // Optionally show user-friendly error message
+        alert("Failed to upload image. Please try again.");
+      } finally {
+        setUploading(false);
         // Reset input value to allow uploading same file again
         target.value = "";
       }
@@ -30,8 +74,8 @@ const ImageButton = () => {
     <Fragment>
       <MenuButton
         icon="Image"
-        tooltip="Insert Image"
-        disabled={!canInsert}
+        tooltip={uploading ? "Uploading..." : "Insert Image"}
+        disabled={!canInsert || uploading}
         onClick={handleClick}
       />
       <input
@@ -40,6 +84,7 @@ const ImageButton = () => {
         accept="image/*"
         ref={fileInput}
         onChange={onUpload}
+        disabled={uploading}
       />
     </Fragment>
   );

@@ -34,6 +34,7 @@
     "docx": "^9.5.1",
     "lowlight": "^3.3.0",
     "next": "^16.1.1",
+    "next-cloudinary": "^6.17.5",
     "prosemirror-highlight": "^0.13.0",
     "react": "^19.2.3",
     "react-colorful": "^5.6.1",
