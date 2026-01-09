@@ -1,7 +1,7 @@
 "use client";
 import Image from "next/image";
-import { Suspense, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
 
 import TiptapRenderer from "@/components/tiptap-renderer/client-renderer";
 import { usePost } from "@/hooks/use-post";
