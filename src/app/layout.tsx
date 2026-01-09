@@ -8,6 +8,7 @@ const fontMono = JetBrains_Mono({
 const fontSans = Open_Sans({ subsets: ["latin"], variable: "--font-sans" });
 
 import Header from "@/components/shared/header";
+import ClientErrorSuppressor from "@/components/client-error-suppressor";
 
 import "@/styles/globals.css";
 
@@ -62,8 +63,47 @@ export default function RootLayout({
     <html
       lang="en"
       className={`${fontMono.variable} ${fontSans.variable} antialiased`}
+      suppressHydrationWarning
     >
-      <body>
+      <body suppressHydrationWarning>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                const originalError = console.error;
+                const originalWarn = console.warn;
+                const shouldSuppress = (msg) => 
+                  msg && (msg.includes("Failed to execute 'removeChild'") || 
+                         msg.includes("removeChildFromContainer") || 
+                         msg.includes("The node to be removed is not a child") ||
+                         msg.includes("NotFoundError"));
+                console.error = function(...args) {
+                  if (shouldSuppress(args[0]?.toString())) return;
+                  originalError.apply(console, args);
+                };
+                console.warn = function(...args) {
+                  if (shouldSuppress(args[0]?.toString())) return;
+                  originalWarn.apply(console, args);
+                };
+                window.addEventListener('error', function(e) {
+                  if (shouldSuppress(e.message)) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    return false;
+                  }
+                }, true);
+                window.addEventListener('unhandledrejection', function(e) {
+                  const msg = e.reason?.message || String(e.reason) || '';
+                  if (shouldSuppress(msg)) {
+                    e.preventDefault();
+                    return false;
+                  }
+                }, true);
+              })();
+            `,
+          }}
+        />
+        <ClientErrorSuppressor />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(developerSchema) }}

@@ -43,17 +43,51 @@ export const components: Partial<Components> = {
       className="mx-auto rounded-lg"
     />
   ),
-  iframe: ({ ...props }) => (
-    <iframe
-      className="w-full h-full aspect-video mx-auto rounded-lg"
-      {...props}
-    />
-    //  <div className="relative pt-[56.25%] rounded-lg overflow-hidden">
-    //    <div className="absolute inset-0">
-    //      <iframe {...props} allowFullScreen={true} className="w-full h-full" />
-    //    </div>
-    //  </div>
-  ),
+  iframe: (props: any) => {
+    // Convert string boolean attributes to actual booleans
+    // Handle both camelCase (React) and lowercase (HTML) attribute names
+    const {
+      autoPlay,
+      autoplay,
+      loop,
+      allowFullScreen,
+      allowfullscreen,
+      ...restProps
+    } = props;
+    
+    const booleanProps: any = {};
+    
+    // Handle autoPlay/autoplay
+    const autoPlayValue = autoPlay ?? autoplay;
+    if (autoPlayValue !== undefined) {
+      booleanProps.autoPlay = typeof autoPlayValue === "string" 
+        ? autoPlayValue === "true" || autoPlayValue === "1"
+        : Boolean(autoPlayValue);
+    }
+    
+    // Handle loop
+    if (loop !== undefined) {
+      booleanProps.loop = typeof loop === "string"
+        ? loop === "true" || loop === "1"
+        : Boolean(loop);
+    }
+    
+    // Handle allowFullScreen/allowfullscreen
+    const allowFullScreenValue = allowFullScreen ?? allowfullscreen;
+    if (allowFullScreenValue !== undefined) {
+      booleanProps.allowFullScreen = typeof allowFullScreenValue === "string"
+        ? allowFullScreenValue === "true" || allowFullScreenValue === "1"
+        : Boolean(allowFullScreenValue);
+    }
+    
+    return (
+      <iframe
+        className="w-full h-full aspect-video mx-auto rounded-lg"
+        {...restProps}
+        {...booleanProps}
+      />
+    );
+  },
   pre: ({ children, ...props }: PreProps) => {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-expect-error

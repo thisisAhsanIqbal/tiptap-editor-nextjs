@@ -123,7 +123,9 @@ export function downloadImage(src: string, filename?: string): void {
       link.download = filename || `image.${extension}`;
       document.body.appendChild(link);
       link.click();
-      document.body.removeChild(link);
+      if (link.parentNode === document.body) {
+        document.body.removeChild(link);
+      }
       URL.revokeObjectURL(url);
     })
     .catch((error) => {

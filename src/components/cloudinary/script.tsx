@@ -23,7 +23,9 @@ const Script = ({ src, onError, onLoad }: LoadScriptProps) => {
     return () => {
       script.removeEventListener("load", onLoad as any);
       script.removeEventListener("error", onError as any);
-      document.body.removeChild(script);
+      if (script.parentNode === document.body) {
+        document.body.removeChild(script);
+      }
     };
   }, [src, onLoad, onError]);
 

@@ -28,7 +28,7 @@ const MediaLibrary = ({
   useEffect(() => {
     function destroy() {
       const iframe = document.querySelector("iframe[src*='cloudinary']");
-      if (iframe && iframe.parentNode) {
+      if (iframe && iframe.parentNode && iframe.parentNode.parentNode === document.body) {
         document.body.removeChild(iframe.parentNode);
         console.log("Media Library widget destroyed successfully.");
       }

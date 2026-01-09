@@ -19,7 +19,9 @@ export function useExport() {
       link.download = filename;
       document.body.appendChild(link);
       link.click();
-      document.body.removeChild(link);
+      if (link.parentNode === document.body) {
+        document.body.removeChild(link);
+      }
       URL.revokeObjectURL(url);
 
       return result;
