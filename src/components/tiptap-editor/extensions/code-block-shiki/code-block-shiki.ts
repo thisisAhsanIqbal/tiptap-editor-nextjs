@@ -9,6 +9,7 @@ export const CodeBlockShiki = CodeBlock.extend({
     return {
       ...this.parent?.(),
       defaultLanguage: defaultLanguage,
+      languageClassPrefix: "language-",
     };
   },
 
