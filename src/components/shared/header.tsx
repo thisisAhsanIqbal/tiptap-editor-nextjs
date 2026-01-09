@@ -22,7 +22,7 @@ const Header = () => {
 
         <div className="flex gap-5 px-3">
           <ThemeSwitcher />
-          <Link href="https://github.com/ndtrung341/next-tiptap">
+          <Link href="https://github.com/thisisAhsanIqbal/tiptap-editor-nextjs/tree/main">
             <GithubIcon className="size-5" />
           </Link>
         </div>
