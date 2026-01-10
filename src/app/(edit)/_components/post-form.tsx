@@ -557,54 +557,6 @@ export default function PostForm({ post, editable, onSave, saveStatus = "idle", 
         </p>
       </div>
 
-      {/* Publish Status Section */}
-      {editable && (
-        <div className="p-4 bg-slate-50 dark:bg-slate-900 rounded-lg border border-slate-200 dark:border-slate-700">
-          <div className="flex items-center justify-between">
-            <div>
-              <label className="font-semibold text-slate-700 dark:text-slate-300 flex items-center gap-2 mb-1">
-                <div className="w-1 h-5 bg-indigo-500 rounded-full" />
-                Publication Status
-              </label>
-              <p className="text-xs text-slate-500 dark:text-slate-400">
-                {isPublished 
-                  ? "This post will be published and visible to everyone"
-                  : "This post will be saved as a draft (not visible to public)"}
-              </p>
-            </div>
-            <label className="flex items-center gap-3 cursor-pointer">
-              <span className={`text-sm font-medium ${isPublished ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-600 dark:text-slate-400'}`}>
-                {isPublished ? 'Published' : 'Draft'}
-              </span>
-              <div className="relative">
-                <input
-                  type="checkbox"
-                  checked={isPublished}
-                  onChange={(e) => setIsPublished(e.target.checked)}
-                  disabled={saveStatus === "saving" || !editable}
-                  className="sr-only"
-                  id="publish-toggle"
-                />
-                <label
-                  htmlFor="publish-toggle"
-                  className={`flex items-center w-14 h-7 rounded-full transition-colors cursor-pointer ${
-                    isPublished
-                      ? 'bg-indigo-600'
-                      : 'bg-slate-300 dark:bg-slate-600'
-                  } ${saveStatus === "saving" || !editable ? 'opacity-50 cursor-not-allowed' : ''}`}
-                >
-                  <span
-                    className={`inline-block w-5 h-5 bg-white rounded-full shadow transform transition-transform ${
-                      isPublished ? 'translate-x-8' : 'translate-x-1'
-                    }`}
-                  />
-                </label>
-              </div>
-            </label>
-          </div>
-        </div>
-      )}
-
       {/* Categories Section */}
       <div>
         <div className="flex items-center justify-between mb-3">
