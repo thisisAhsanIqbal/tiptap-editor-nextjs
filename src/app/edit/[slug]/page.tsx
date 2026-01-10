@@ -11,8 +11,9 @@ import "../../(edit)/style.scss";
 
 export default function EditPostPage() {
   const params = useParams();
-  const postId = params.id as string;
-  const { debouncedSave, savePost, saveStatus, isLoading, post, error, createNewPost } = usePost(postId);
+  // Handle both slug and ID - the param name is [slug] but it can contain either slug or ID
+  const slugOrId = params.slug as string;
+  const { debouncedSave, savePost, saveStatus, isLoading, post, error, createNewPost } = usePost(slugOrId);
 
   if (isLoading) {
     return (

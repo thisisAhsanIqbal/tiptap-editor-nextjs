@@ -2,7 +2,7 @@ import React from "react";
 
 import Image from "next/image";
 import Link from "next/link";
-import { LuCalendarDays, LuClock } from "react-icons/lu";
+import { LuCalendarDays, LuClock, LuTag } from "react-icons/lu";
 
 interface PostHeaderProps {
   title: string;
@@ -10,7 +10,17 @@ interface PostHeaderProps {
   author: string;
   createdAt: string;
   readingTime: number;
+  categories?: string[];
 }
+
+// Format date as "06 May 2026"
+const formatDate = (dateString: string): string => {
+  const date = new Date(dateString);
+  const day = date.getDate().toString().padStart(2, '0');
+  const month = date.toLocaleDateString("en-US", { month: "long" });
+  const year = date.getFullYear();
+  return `${day} ${month} ${year}`;
+};
 
 const PostHeader = ({
   title,
@@ -18,9 +28,10 @@ const PostHeader = ({
   cover,
   createdAt,
   readingTime,
+  categories = [],
 }: PostHeaderProps) => {
   return (
-    <div className="lg:max-w-180 mx-auto">
+    <div className="w-full">
       <div className="flex items-center mb-6 gap-4">
         <Image
           src={"/avatar.jpg"}
@@ -33,25 +44,27 @@ const PostHeader = ({
           <div className="font-semibold mb-3">
             By <u>{author}</u>
           </div>
-          <div className="flex items-center">
+          <div className="flex items-center flex-wrap gap-x-3">
+            {categories.length > 0 && (
+              <>
+                <div className="flex items-center gap-2 text-sm">
+                  <LuTag size={18} />
+                  <span>{categories.join(", ")}</span>
+                </div>
+                <div className="h-1.5 w-1.5 rounded-full bg-gray-500 dark:bg-gray-300" />
+              </>
+            )}
             <div className="flex items-center gap-2 text-sm">
               <LuCalendarDays size={18} />
-              <span>{createdAt}</span>
+              <span>{formatDate(createdAt)}</span>
             </div>
-            <div className="h-1.5 w-1.5 mx-3 rounded-full bg-gray-500 dark:bg-gray-300" />
+            <div className="h-1.5 w-1.5 rounded-full bg-gray-500 dark:bg-gray-300" />
             <div className="flex items-center gap-2 text-sm">
               <LuClock size={18} />
               <span>{readingTime} min read</span>
             </div>
           </div>
         </div>
-
-        <Link
-          href="/"
-          className="ml-auto flex items-center gap-2 px-5 h-8 bg-amber-600 text-white rounded-md font-medium text-sm"
-        >
-          Edit
-        </Link>
       </div>
 
       <h1 className="text-3xl leading-snug md:text-4xl md:leading-normal font-bold">
@@ -62,9 +75,10 @@ const PostHeader = ({
         <Image
           src={cover}
           alt={title}
-          width={1932}
-          height={1087}
-          className="my-10 rounded-lg"
+          width={1200}
+          height={628}
+          className="my-10 rounded-lg w-full h-auto object-cover"
+          style={{ aspectRatio: '16/9' }}
           priority
         />
       )}

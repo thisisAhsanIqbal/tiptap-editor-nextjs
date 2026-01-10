@@ -9,9 +9,9 @@ import TiptapRenderer from "@/components/tiptap-renderer/client-renderer";
 import { usePost } from "@/hooks/use-post";
 import PostContent from "@/components/shared/post-content";
 import PostHeader from "@/components/shared/post-header";
-import PostSharing from "@/components/shared/post-sharing";
 import PostToc from "@/components/shared/post-toc";
 import PostReadingProgress from "@/components/shared/reading-progress";
+import categoryService from "@/lib/supabase/category";
 
 export default function PostDetailPage() {
   const params = useParams();
@@ -19,6 +19,23 @@ export default function PostDetailPage() {
   // Handle both slug and ID - the param name is [slug] but it can contain either slug or ID
   const slugOrId = params.slug as string;
   const { post, isLoading, error } = usePost(slugOrId);
+  const [categories, setCategories] = React.useState<Array<{ id: string; name: string }>>([]);
+
+  // Fetch categories when post is loaded
+  React.useEffect(() => {
+    if (post?.id) {
+      categoryService.getByPostId(post.id)
+        .then((cats) => {
+          setCategories(cats.map(cat => ({ id: cat.id, name: cat.name })));
+        })
+        .catch((err) => {
+          console.error('Error fetching categories:', err);
+          setCategories([]);
+        });
+    } else {
+      setCategories([]);
+    }
+  }, [post?.id]);
 
   if (isLoading) {
     return (
@@ -70,26 +87,28 @@ export default function PostDetailPage() {
           <LuArrowLeft className="size-4" />
           <span>Back to All Posts</span>
         </Link>
-        {post.id && (
+        {post.slug || post.id ? (
           <Link
-            href={`/edit/${post.id}`}
+            href={`/edit/${post.slug || post.id}`}
             className="inline-flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-md font-medium transition-colors"
           >
             <LuPencil className="size-4" />
             <span>Edit Post</span>
           </Link>
-        )}
+        ) : null}
       </div>
 
-      <PostHeader
-        title={post.title}
-        author={post.author}
-        createdAt={post.createdAt}
-        readingTime={post.readingTime}
-        cover={post.cover}
-      />
-      <div className="grid grid-cols-1 w-full lg:w-auto lg:grid-cols-[minmax(auto,256px)_minmax(720px,1fr)_minmax(auto,256px)] gap-6 lg:gap-12">
-        <PostSharing />
+      <div className="w-full lg:w-auto lg:max-w-[calc(720px+256px+3rem)] mx-auto">
+        <PostHeader
+          title={post.title}
+          author={post.author}
+          createdAt={post.createdAt}
+          readingTime={post.readingTime}
+          cover={post.cover}
+          categories={categories.map(cat => cat.name)}
+        />
+      </div>
+      <div className="grid grid-cols-1 w-full lg:w-auto lg:grid-cols-[minmax(720px,1fr)_minmax(auto,256px)] gap-6 lg:gap-12 lg:max-w-[calc(720px+256px+3rem)] mx-auto">
         <PostContent>
           <TiptapRenderer>{post.html}</TiptapRenderer>
         </PostContent>

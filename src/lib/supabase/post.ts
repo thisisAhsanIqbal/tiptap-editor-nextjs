@@ -17,8 +17,8 @@ const mapRowToPost = (row: PostRow): Post => ({
   readingTime: row.reading_time,
   createdAt: row.created_at,
   id: row.id, // Add id to Post type if needed
-  metaTitle: row.meta_title || '',
-  metaDescription: row.meta_description || '',
+  metaTitle: row.meta_title?.trim() || undefined,
+  metaDescription: row.meta_description?.trim() || undefined,
   published: row.published ?? false,
   slug: row.slug || '',
 });
@@ -110,8 +110,12 @@ const getPost = async (idOrSlug?: string): Promise<Post | null> => {
 
       if (!data) {
         console.warn('No post found with ID or slug:', idOrSlug);
+        console.warn('Tried by slug:', !isUUID);
+        console.warn('Tried by ID:', isUUID);
         return null;
       }
+
+      console.log('Post found in database:', { id: data.id, slug: data.slug, title: data.title });
 
       const post = mapRowToPost(data);
       // Fetch categories for this post
