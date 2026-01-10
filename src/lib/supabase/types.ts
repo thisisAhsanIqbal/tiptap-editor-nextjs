@@ -41,6 +41,50 @@ export type Database = {
           category_id?: string
         }
       }
+      profiles: {
+        Row: {
+          id: string
+          username: string | null
+          email: string | null
+          full_name: string | null
+          avatar_url: string | null
+          bio: string | null
+          website_url: string | null
+          twitter_handle: string | null
+          linkedin_url: string | null
+          role: 'user' | 'admin' | 'author' | 'editor'
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id: string
+          username?: string | null
+          email?: string | null
+          full_name?: string | null
+          avatar_url?: string | null
+          bio?: string | null
+          website_url?: string | null
+          twitter_handle?: string | null
+          linkedin_url?: string | null
+          role?: 'user' | 'admin' | 'author' | 'editor'
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          username?: string | null
+          email?: string | null
+          full_name?: string | null
+          avatar_url?: string | null
+          bio?: string | null
+          website_url?: string | null
+          twitter_handle?: string | null
+          linkedin_url?: string | null
+          role?: 'user' | 'admin' | 'author' | 'editor'
+          created_at?: string
+          updated_at?: string
+        }
+      }
       posts: {
         Row: {
           id: string

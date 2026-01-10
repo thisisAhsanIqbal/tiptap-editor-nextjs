@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import { useForm, Controller } from "react-hook-form";
-import { LuSave, LuImage, LuX } from "react-icons/lu";
+import { LuSave, LuImage, LuX, LuFileText, LuSend } from "react-icons/lu";
 
 import TiptapEditor, { type TiptapEditorRef } from "@/components/tiptap-editor";
 import { loadInitialContent } from "@/components/tiptap-editor/helpers/tiptap";
@@ -86,6 +86,8 @@ export default function PostForm({ post, editable, onSave, saveStatus = "idle", 
       setCoverImage(post.cover || "");
       setSelectedCategoryIds(post.categoryIds || []);
       setIsPublished(post.published ?? false);
+      setSlugManuallyEdited(!!post.slug); // If post has slug, consider it manually set
+      setMetaTitleManuallyEdited(!!post.metaTitle); // If post has meta title, consider it manually set
       // Update editor content when post is loaded
       if (editorRef.current && post.html) {
         loadInitialContent(editorRef.current, post.html);
@@ -103,6 +105,8 @@ export default function PostForm({ post, editable, onSave, saveStatus = "idle", 
       setCoverImage("");
       setSelectedCategoryIds([]);
       setIsPublished(true); // New posts default to published
+      setSlugManuallyEdited(false); // Reset manual edit flag for new post
+      setMetaTitleManuallyEdited(false); // Reset manual edit flag for new post
       // Clear editor content when creating new post
       if (editorRef.current) {
         loadInitialContent(editorRef.current, "");
@@ -110,18 +114,41 @@ export default function PostForm({ post, editable, onSave, saveStatus = "idle", 
     }
   }, [post, form]);
 
-  // Auto-generate slug when title changes (only for new posts)
+  // Track if slug was manually edited by user (not auto-generated)
+  const [slugManuallyEdited, setSlugManuallyEdited] = useState(false);
+  // Track if meta title was manually edited by user (not auto-generated)
+  const [metaTitleManuallyEdited, setMetaTitleManuallyEdited] = useState(false);
+  
+  // Auto-generate slug and meta title when title changes in real-time
   const title = form.watch("title");
+  
   useEffect(() => {
-    if (!post?.id && title) {
-      const autoSlug = generateSlug(title);
-      const currentSlug = form.getValues("slug");
-      // Only auto-generate if slug is empty or matches the previous auto-generated slug
-      if (!currentSlug || currentSlug === generateSlug(form.getValues("title") || "")) {
-        form.setValue("slug", autoSlug);
+    if (title && title.trim()) {
+      // Only auto-update slug if it hasn't been manually edited
+      if (!slugManuallyEdited) {
+        // Generate slug from the full title in real-time
+        const autoSlug = generateSlug(title.trim());
+        if (autoSlug && autoSlug.length > 0) {
+          // Always update slug in real-time as title changes (if not manually edited)
+          form.setValue("slug", autoSlug, { shouldValidate: false, shouldDirty: false });
+        }
+      }
+      
+      // Only auto-update meta title if it hasn't been manually edited
+      if (!metaTitleManuallyEdited) {
+        // Always update meta title in real-time with the full title (if not manually edited)
+        form.setValue("metaTitle", title.trim(), { shouldValidate: false, shouldDirty: false });
+      }
+    } else if (!title.trim()) {
+      // Clear slug and meta title if title is empty
+      if (!slugManuallyEdited) {
+        form.setValue("slug", "", { shouldValidate: false, shouldDirty: false });
+      }
+      if (!metaTitleManuallyEdited) {
+        form.setValue("metaTitle", "", { shouldValidate: false, shouldDirty: false });
       }
     }
-  }, [title, post?.id, generateSlug, form]);
+  }, [title, generateSlug, form, slugManuallyEdited, metaTitleManuallyEdited]);
 
   // Auto-save removed - only save when button is clicked
 
@@ -165,7 +192,7 @@ export default function PostForm({ post, editable, onSave, saveStatus = "idle", 
     }
   }, [newCategoryName, newCategoryDescription, refetchCategories]);
 
-  const handleSaveClick = useCallback(async () => {
+  const handleSaveClick = useCallback(async (published: boolean) => {
     const editor = editorRef.current;
     if (!editor) {
       console.error('Editor not available');
@@ -214,6 +241,9 @@ export default function PostForm({ post, editable, onSave, saveStatus = "idle", 
         return;
       }
       
+      // Update isPublished state
+      setIsPublished(published);
+      
       // Call onSave with current data including cover image, meta fields, categories, published status, and slug
       await onSave({ 
         title, 
@@ -224,16 +254,93 @@ export default function PostForm({ post, editable, onSave, saveStatus = "idle", 
         metaTitle: metaTitle || undefined,
         metaDescription: metaDescription || undefined,
         categoryIds: selectedCategoryIds,
-        published: isPublished,
+        published: published,
         slug: finalSlug || undefined,
       }, createNew);
     } catch (error) {
       console.error('Error in handleSaveClick:', error);
     }
-  }, [form, onSave, post, coverImage, selectedCategoryIds, isPublished, generateSlug, formatSlug]);
+  }, [form, onSave, post, coverImage, selectedCategoryIds, generateSlug, formatSlug]);
 
   return (
     <div className="flex flex-col gap-6">
+      {/* Action Buttons at Top */}
+      <div className="mb-6 flex items-center justify-end flex-wrap gap-3">
+        <div className="flex items-center gap-2">
+          {onCreateNew && (
+            <button
+              onClick={onCreateNew}
+              disabled={saveStatus === "saving" || !editable}
+              className="flex items-center gap-2 px-4 py-2 rounded-md font-medium text-sm bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-300 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              New Post
+            </button>
+          )}
+          {editable && (
+            <>
+              <button
+                onClick={(e) => {
+                  e.preventDefault();
+                  handleSaveClick(false);
+                }}
+                disabled={saveStatus === "saving" || !editable}
+                className={`flex items-center gap-2 px-4 py-2 rounded-md font-medium text-sm transition-colors ${
+                  saveStatus === "saving"
+                    ? "bg-slate-400 cursor-not-allowed text-white"
+                    : saveStatus === "saved" && !isPublished
+                    ? "bg-green-600 hover:bg-green-700 text-white"
+                    : saveStatus === "error"
+                    ? "bg-red-600 hover:bg-red-700 text-white"
+                    : "bg-slate-600 hover:bg-slate-700 text-white"
+                }`}
+              >
+                <LuFileText className="size-4" />
+                <span>
+                  {saveStatus === "saving"
+                    ? "Saving..."
+                    : saveStatus === "saved" && !isPublished
+                    ? "Saved as Draft!"
+                    : saveStatus === "error"
+                    ? "Error"
+                    : post?.id
+                    ? "Save Draft"
+                    : "Save as Draft"}
+                </span>
+              </button>
+              <button
+                onClick={(e) => {
+                  e.preventDefault();
+                  handleSaveClick(true);
+                }}
+                disabled={saveStatus === "saving" || !editable}
+                className={`flex items-center gap-2 px-4 py-2 rounded-md font-medium text-sm transition-colors ${
+                  saveStatus === "saving"
+                    ? "bg-slate-400 cursor-not-allowed text-white"
+                    : saveStatus === "saved" && isPublished
+                    ? "bg-green-600 hover:bg-green-700 text-white"
+                    : saveStatus === "error"
+                    ? "bg-red-600 hover:bg-red-700 text-white"
+                    : "bg-indigo-600 hover:bg-indigo-700 text-white"
+                }`}
+              >
+                <LuSend className="size-4" />
+                <span>
+                  {saveStatus === "saving"
+                    ? "Publishing..."
+                    : saveStatus === "saved" && isPublished
+                    ? "Published!"
+                    : saveStatus === "error"
+                    ? "Error"
+                    : post?.id
+                    ? "Publish"
+                    : "Publish"}
+                </span>
+              </button>
+            </>
+          )}
+        </div>
+      </div>
+
       <div>
         <label className="font-semibold text-slate-700 dark:text-slate-300 mb-3 flex items-center gap-2">
           <div className="w-1 h-5 bg-indigo-500 rounded-full" />
@@ -269,10 +376,45 @@ export default function PostForm({ post, editable, onSave, saveStatus = "idle", 
               className="w-full px-4 py-2.5 shadow border border-[#d1d9e0] rounded-md bg-white dark:bg-[#0d1017] dark:text-white dark:border-[#3d444d] outline-none"
               placeholder="post-url-slug"
               disabled={!editable}
+              onFocus={() => {
+                // When user focuses on slug field, mark as manually edited
+                // This prevents auto-generation from overwriting user's manual edits
+                setSlugManuallyEdited(true);
+              }}
+              onKeyDown={(e) => {
+                // Immediately replace space with hyphen when space key is pressed
+                if (e.key === ' ') {
+                  const currentValue = field.value || '';
+                  // Don't add hyphen if slug box is empty
+                  if (!currentValue.trim()) {
+                    e.preventDefault(); // Prevent space from being added
+                    return;
+                  }
+                  e.preventDefault(); // Prevent space from being added
+                  const input = e.currentTarget;
+                  const start = input.selectionStart || 0;
+                  const end = input.selectionEnd || 0;
+                  const newValue = currentValue.slice(0, start) + '-' + currentValue.slice(end);
+                  field.onChange(newValue);
+                  // Set cursor position after the hyphen
+                  setTimeout(() => {
+                    input.setSelectionRange(start + 1, start + 1);
+                  }, 0);
+                }
+              }}
               onChange={(e) => {
+                // Mark that slug was manually edited when user types in slug field
+                setSlugManuallyEdited(true);
                 // Automatically format slug: replace spaces with hyphens
-                const formatted = formatSlug(e.target.value);
-                field.onChange(formatted);
+                const inputValue = e.target.value;
+                if (inputValue.length > 0) {
+                  const formatted = formatSlug(inputValue);
+                  field.onChange(formatted);
+                } else {
+                  field.onChange("");
+                  // If slug is cleared, allow auto-generation again
+                  setSlugManuallyEdited(false);
+                }
               }}
             />
           )}
@@ -283,61 +425,10 @@ export default function PostForm({ post, editable, onSave, saveStatus = "idle", 
       </div>
 
       <div>
-        <div className="flex items-center justify-between mb-3">
-          <label className="font-semibold text-slate-700 dark:text-slate-300 flex items-center gap-2">
-            <div className="w-1 h-5 bg-indigo-500 rounded-full" />
-            Content
-          </label>
-          <div className="flex items-center gap-2">
-            {onCreateNew && (
-              <button
-                onClick={onCreateNew}
-                disabled={saveStatus === "saving" || !editable}
-                className="flex items-center gap-2 px-4 py-2 rounded-md font-medium text-sm bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-300 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                New Post
-              </button>
-            )}
-            {editable && (
-              <label className="flex items-center gap-2 px-4 py-2 rounded-md font-medium text-sm bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={isPublished}
-                  onChange={(e) => setIsPublished(e.target.checked)}
-                  disabled={saveStatus === "saving" || !editable}
-                  className="w-4 h-4 text-indigo-600 border-slate-300 rounded focus:ring-indigo-500 disabled:opacity-50"
-                />
-                <span className="text-sm">Publish</span>
-              </label>
-            )}
-            <button
-              onClick={handleSaveClick}
-              disabled={saveStatus === "saving" || !editable}
-              className={`flex items-center gap-2 px-4 py-2 rounded-md font-medium text-sm transition-colors ${
-                saveStatus === "saving"
-                  ? "bg-slate-400 cursor-not-allowed text-white"
-                  : saveStatus === "saved"
-                  ? "bg-green-600 hover:bg-green-700 text-white"
-                  : saveStatus === "error"
-                  ? "bg-red-600 hover:bg-red-700 text-white"
-                  : "bg-indigo-600 hover:bg-indigo-700 text-white"
-              }`}
-            >
-              <LuSave className="size-4" />
-              <span>
-                {saveStatus === "saving"
-                  ? "Saving..."
-                  : saveStatus === "saved"
-                  ? "Saved!"
-                  : saveStatus === "error"
-                  ? "Error"
-                  : isPublished
-                  ? (post?.id ? "Update & Publish" : "Create & Publish")
-                  : (post?.id ? "Save Draft" : "Save as Draft")}
-              </span>
-            </button>
-          </div>
-        </div>
+        <label className="font-semibold text-slate-700 dark:text-slate-300 mb-3 flex items-center gap-2">
+          <div className="w-1 h-5 bg-indigo-500 rounded-full" />
+          Content
+        </label>
         <Controller
           control={form.control}
           name="html"
@@ -425,6 +516,15 @@ export default function PostForm({ post, editable, onSave, saveStatus = "idle", 
               className="w-full px-4 py-2.5 shadow border border-[#d1d9e0] rounded-md bg-white dark:bg-[#0d1017] dark:text-white dark:border-[#3d444d] outline-none"
               placeholder="Enter meta title for SEO (optional)..."
               disabled={!editable}
+              onFocus={() => {
+                // When user focuses on meta title field, mark as manually edited
+                setMetaTitleManuallyEdited(true);
+              }}
+              onChange={(e) => {
+                // Mark that meta title was manually edited when user types
+                setMetaTitleManuallyEdited(true);
+                field.onChange(e.target.value);
+              }}
             />
           )}
         />
