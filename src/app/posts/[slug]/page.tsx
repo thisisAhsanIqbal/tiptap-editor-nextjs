@@ -3,7 +3,7 @@
 import React from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
-import { LuArrowLeft, LuCalendarDays, LuClock, LuPencil } from "react-icons/lu";
+import { LuArrowLeft, LuPencil } from "react-icons/lu";
 
 import TiptapRenderer from "@/components/tiptap-renderer/client-renderer";
 import { usePost } from "@/hooks/use-post";
@@ -16,14 +16,9 @@ import PostReadingProgress from "@/components/shared/reading-progress";
 export default function PostDetailPage() {
   const params = useParams();
   const router = useRouter();
-  const postId = params.id as string;
-  const { post, isLoading, error } = usePost(postId);
-
-  // Debug logging
-  React.useEffect(() => {
-    console.log('PostDetailPage - postId:', postId);
-    console.log('PostDetailPage - params:', params);
-  }, [postId, params]);
+  // Handle both slug and ID - the param name is [slug] but it can contain either slug or ID
+  const slugOrId = params.slug as string;
+  const { post, isLoading, error } = usePost(slugOrId);
 
   if (isLoading) {
     return (
@@ -42,9 +37,9 @@ export default function PostDetailPage() {
           <p className="text-red-800 dark:text-red-200 font-medium">
             {error || "Post not found"}
           </p>
-          {postId && (
+          {slugOrId && (
             <p className="text-sm text-red-600 dark:text-red-300 mt-2">
-              Post ID: {postId}
+              Slug/ID: {slugOrId}
             </p>
           )}
           <p className="text-sm text-red-600 dark:text-red-300 mt-1">
@@ -75,13 +70,15 @@ export default function PostDetailPage() {
           <LuArrowLeft className="size-4" />
           <span>Back to All Posts</span>
         </Link>
-        <Link
-          href={`/edit/${post.id}`}
-          className="inline-flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-md font-medium transition-colors"
-        >
-          <LuPencil className="size-4" />
-          <span>Edit Post</span>
-        </Link>
+        {post.id && (
+          <Link
+            href={`/edit/${post.id}`}
+            className="inline-flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-md font-medium transition-colors"
+          >
+            <LuPencil className="size-4" />
+            <span>Edit Post</span>
+          </Link>
+        )}
       </div>
 
       <PostHeader

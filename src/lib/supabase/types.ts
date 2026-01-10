@@ -1,6 +1,46 @@
 export type Database = {
   public: {
     Tables: {
+      categories: {
+        Row: {
+          id: string
+          name: string
+          slug: string
+          description: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          name: string
+          slug: string
+          description?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          name?: string
+          slug?: string
+          description?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+      }
+      post_categories: {
+        Row: {
+          post_id: string
+          category_id: string
+        }
+        Insert: {
+          post_id: string
+          category_id: string
+        }
+        Update: {
+          post_id?: string
+          category_id?: string
+        }
+      }
       posts: {
         Row: {
           id: string
@@ -17,6 +57,8 @@ export type Database = {
           slug?: string | null
           excerpt?: string | null
           tags?: string[] | null
+          meta_title?: string | null
+          meta_description?: string | null
         }
         Insert: {
           id?: string
@@ -33,6 +75,8 @@ export type Database = {
           slug?: string | null
           excerpt?: string | null
           tags?: string[] | null
+          meta_title?: string | null
+          meta_description?: string | null
         }
         Update: {
           id?: string
@@ -49,6 +93,8 @@ export type Database = {
           slug?: string | null
           excerpt?: string | null
           tags?: string[] | null
+          meta_title?: string | null
+          meta_description?: string | null
         }
       }
     }

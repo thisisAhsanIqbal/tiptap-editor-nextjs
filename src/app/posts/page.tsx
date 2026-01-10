@@ -102,12 +102,17 @@ export default function PostsPage() {
               key={post.id || `post-${posts.indexOf(post)}`}
               className="bg-white dark:bg-slate-800 rounded-lg shadow-md hover:shadow-lg transition-shadow border border-slate-200 dark:border-slate-700 overflow-hidden cursor-pointer group"
               onClick={() => {
-                if (post.id) {
-                  console.log('Navigating to post:', post.id);
+                // Prioritize slug, fallback to ID if slug is not available
+                if (post.slug && post.slug.trim()) {
+                  console.log('Navigating to post by slug:', post.slug);
+                  router.push(`/posts/${post.slug}`);
+                } else if (post.id) {
+                  // Fallback to ID if slug is not available
+                  console.log('Navigating to post by ID (slug not available):', post.id);
                   router.push(`/posts/${post.id}`);
                 } else {
-                  console.error('Post ID is missing:', post);
-                  alert('Post ID is missing. Cannot navigate to post detail.');
+                  console.error('Post slug and ID are missing:', post);
+                  alert('Post slug and ID are missing. Cannot navigate to post detail.');
                 }
               }}
             >
