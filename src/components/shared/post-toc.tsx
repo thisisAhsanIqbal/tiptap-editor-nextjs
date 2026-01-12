@@ -37,9 +37,9 @@ const PostToc = () => {
       <div className="lg:sticky lg:h-[calc(100vh-120px)] lg:top-24 overflow-auto">
         <h2 className="text-sm font-bold uppercase">On this page</h2>
         <ul className="mt-4 space-y-3.5 text-sm">
-          {items.map((item) => (
+          {items.map((item, index) => (
             <li
-              key={item.id}
+              key={`${item.id}-${index}`}
               style={{
                 paddingLeft: `${(item.level - 2) * 1}rem`,
               }}

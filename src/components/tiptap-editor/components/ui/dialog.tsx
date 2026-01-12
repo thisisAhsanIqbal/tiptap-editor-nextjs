@@ -13,7 +13,11 @@ const Dialog = ({ children, open,  onOpenChange }: DialogProps) => {
     onOpenChange?.(false);
   };
 
-  if (!open) return;
+  if (!open) return null;
+
+  // Safely get body element
+  const bodyElement = typeof document !== "undefined" ? document.body : null;
+  if (!bodyElement) return null;
 
   return createPortal(
     <div role="dialog" className="rte-dialog" onClick={onDismiss}>
@@ -21,7 +25,7 @@ const Dialog = ({ children, open,  onOpenChange }: DialogProps) => {
         {children}
       </div>
     </div>,
-    document.querySelector("body")!
+    bodyElement
   );
 };
 

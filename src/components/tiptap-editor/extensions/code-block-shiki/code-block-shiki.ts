@@ -9,6 +9,12 @@ export const CodeBlockShiki = CodeBlock.extend({
     return {
       ...this.parent?.(),
       defaultLanguage: defaultLanguage,
+      languageClassPrefix: "language-",
+      exitOnTripleEnter: true,
+      exitOnArrowDown: true,
+      enableTabIndentation: true,
+      tabSize: 2,
+      HTMLAttributes: {},
     };
   },
 

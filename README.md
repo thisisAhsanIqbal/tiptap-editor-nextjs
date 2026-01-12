@@ -6,7 +6,7 @@ A modern, feature-rich WYSIWYG rich text editor built with [Tiptap](https://tipt
 
 ## Demo
 
-Try it yourself in this [live demo!](https://next-tiptap.vercel.app/)
+Try it yourself in this [live demo!](https://tiptap-editor-iota-nine.vercel.app/)
 
 ## ✨ Features
 
@@ -35,10 +35,10 @@ Try it yourself in this [live demo!](https://next-tiptap.vercel.app/)
 
 ```bash
 # Clone the repository
-git clone https://github.com/ndtrung341/next-tiptap.git
+git clone https://github.com/thisisAhsanIqbal/tiptap-editor-nextjs.git
 
 # Navigate to project directory
-cd next-tiptap
+cd tiptap-editor-nextjs
 
 # Install dependencies
 pnpm install

@@ -1,8 +1,11 @@
 "use client";
 import Image from "next/image";
+import { Suspense, useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
 
 import TiptapRenderer from "@/components/tiptap-renderer/client-renderer";
 import { usePost } from "@/hooks/use-post";
+import { Post } from "@/services/post";
 
 import PostContent from "../../components/shared/post-content";
 import PostHeader from "../../components/shared/post-header";
@@ -10,8 +13,37 @@ import PostSharing from "../../components/shared/post-sharing";
 import PostToc from "../../components/shared/post-toc";
 import PostReadingProgress from "../../components/shared/reading-progress";
 
-export default function PostPage() {
-  const { post } = usePost();
+function PostPageContent() {
+  const searchParams = useSearchParams();
+  const postId = searchParams.get("id");
+  const { post: loadedPost, isLoading } = usePost(postId || undefined);
+  const [previewPost, setPreviewPost] = useState<Post | null>(null);
+
+  // Check for preview post in sessionStorage (for unsaved posts)
+  useEffect(() => {
+    if (!postId) {
+      const stored = sessionStorage.getItem('previewPost');
+      if (stored) {
+        try {
+          setPreviewPost(JSON.parse(stored));
+        } catch (e) {
+          console.error('Error parsing preview post:', e);
+        }
+      }
+    }
+  }, [postId]);
+
+  const post = postId ? loadedPost : previewPost;
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-[calc(100vh-56px)]">
+        <div className="text-lg text-slate-600 dark:text-slate-300">
+          Loading preview...
+        </div>
+      </div>
+    );
+  }
 
   if (!post) return null;
 
@@ -40,5 +72,19 @@ export default function PostPage() {
         className="mx-auto mt-20"
       />
     </article>
+  );
+}
+
+export default function PostPage() {
+  return (
+    <Suspense fallback={
+      <div className="flex items-center justify-center h-[calc(100vh-56px)]">
+        <div className="text-lg text-slate-600 dark:text-slate-300">
+          Loading preview...
+        </div>
+      </div>
+    }>
+      <PostPageContent />
+    </Suspense>
   );
 }

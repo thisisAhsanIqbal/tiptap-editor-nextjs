@@ -138,7 +138,11 @@ export const BubbleMenu = ({
     return null;
   }
 
-  const portalRoot = editor.view.dom.parentElement || document.body;
+  const portalRoot = editor.view.dom.parentElement || (typeof document !== "undefined" ? document.body : null);
+  
+  if (!portalRoot) {
+    return null;
+  }
 
   return createPortal(
     <div

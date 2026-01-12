@@ -57,7 +57,7 @@ export const htmlMock = `
 
 <h2>Links</h2>
 <p>Add <a href="https://tiptap.dev" target="_blank" rel="noopener noreferrer">external links</a> to reference other resources, or create <a href="#internal">internal links</a> for navigation within your document.</p>
-<p>Links can also be <strong><a href="https://github.com/ndtrung341/next-tiptap" target="_blank">combined with text formatting</a></strong> for better visibility!</p>
+<p>Links can also be <strong><a href="https://github.com/thisisAhsanIqbal/tiptap-editor-nextjs" target="_blank">combined with text formatting</a></strong> for better visibility!</p>
 
 <h2>Images</h2>
 <p>Images can be embedded in two ways:</p>
@@ -238,10 +238,10 @@ print(f"Fibonacci sequence: {numbers}")
 
 <h3>Clone and Install</h3>
 <pre><code class="language-bash"># Clone the repository
-git clone https://github.com/ndtrung341/next-tiptap.git
+git clone https://github.com/thisisAhsanIqbal/tiptap-editor-nextjs.git
 
 # Navigate to project directory
-cd next-tiptap
+cd tiptap-editor-nextjs
 
 # Install dependencies
 pnpm install
@@ -328,7 +328,7 @@ export default function MyApp() {
 <h2>Conclusion</h2>
 <p>This editor provides a comprehensive set of features for creating rich, engaging content. Whether you're building a blog, documentation site, or content management system, it offers the flexibility and power you need.</p>
 
-<p style="text-align: center"><em>Try editing this content to explore all the features! Visit the <a href="https://next-tiptap.vercel.app/" target="_blank">live demo</a> to see it in action.</em></p>
+<p style="text-align: center"><em>Try editing this content to explore all the features! Visit the <a href="https://tiptap-editor-iota-nine.vercel.app/" target="_blank">live demo</a> to see it in action.</em></p>
 
 <p style="text-align: center"><strong>Built with ❤️ using Next.js and Tiptap</strong></p>
 `;
@@ -780,7 +780,7 @@ export const jsonMock = {
             {
               type: "link",
               attrs: {
-                href: "https://github.com/ndtrung341/next-tiptap",
+                href: "https://github.com/thisisAhsanIqbal/tiptap-editor-nextjs",
                 target: "_blank",
               },
             },
@@ -1355,7 +1355,7 @@ export const jsonMock = {
       content: [
         {
           type: "text",
-          text: "# Clone the repository\ngit clone https://github.com/ndtrung341/next-tiptap.git\n\n# Navigate to project directory\ncd next-tiptap\n\n# Install dependencies\npnpm install\n# or\nnpm install\n# or\nyarn install",
+          text: "# Clone the repository\ngit clone https://github.com/thisisAhsanIqbal/tiptap-editor-nextjs.git\n\n# Navigate to project directory\ncd tiptap-editor-nextjs\n\n# Install dependencies\npnpm install\n# or\nnpm install\n# or\nyarn install",
         },
       ],
     },
@@ -1599,7 +1599,7 @@ export const jsonMock = {
             {
               type: "link",
               attrs: {
-                href: "https://next-tiptap.vercel.app/",
+                href: "https://tiptap-editor-iota-nine.vercel.app/",
                 target: "_blank",
               },
             },

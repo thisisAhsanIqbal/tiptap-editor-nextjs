@@ -1,18 +1,19 @@
 "use client";
 
-import { Suspense } from "react";
+import React from "react";
 
-import { useSearchParams } from "next/navigation";
+import { useParams } from "next/navigation";
 
 import { usePost } from "@/hooks/use-post";
 
-import PostForm from "./_components/post-form";
-import "./style.scss";
+import PostForm from "../../(edit)/_components/post-form";
+import "../../(edit)/style.scss";
 
-function EditPageContent() {
-  const searchParams = useSearchParams();
-  const postId = searchParams.get("id") || undefined;
-  const { debouncedSave, savePost, saveStatus, isLoading, post, error, createNewPost } = usePost(postId);
+export default function EditPostPage() {
+  const params = useParams();
+  // Handle both slug and ID - the param name is [slug] but it can contain either slug or ID
+  const slugOrId = params.slug as string;
+  const { debouncedSave, savePost, saveStatus, isLoading, post, error, createNewPost } = usePost(slugOrId);
 
   if (isLoading) {
     return (
@@ -42,19 +43,5 @@ function EditPageContent() {
         onCreateNew={createNewPost}
       />
     </div>
-  );
-}
-
-export default function EditPage() {
-  return (
-    <Suspense fallback={
-      <div className="flex items-center justify-center h-[calc(100vh-56px)]">
-        <div className="text-lg text-slate-600 dark:text-slate-300">
-          Loading...
-        </div>
-      </div>
-    }>
-      <EditPageContent />
-    </Suspense>
   );
 }
